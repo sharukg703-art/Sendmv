@@ -416,6 +416,66 @@
     </div>
   </div>
 
+  <!-- BANK ACCOUNT -->
+  <div class="screen" id="bank">
+    <div class="page-header">
+      <button class="back-btn" onclick="go('profile')">←</button>
+      <div class="page-title">Bank Accounts</div>
+      <div class="page-sub">Your linked accounts</div>
+    </div>
+    <div class="page-body with-nav">
+      <!-- Maldives Bank -->
+      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">MALDIVES BANK (MVR)</p>
+      <div style="background:var(--light);border-radius:16px;padding:20px;margin-bottom:20px;border:1.5px solid var(--border);">
+        <div class="form-group">
+          <label class="form-label">Bank Name</label>
+          <select class="form-input" id="bml-bank">
+            <option>Bank of Maldives (BML)</option>
+            <option>Maldives Islamic Bank (MIB)</option>
+            <option>STO</option>
+            <option>Allied Insurance</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Number</label>
+          <input type="tel" class="form-input" id="bml-acc" placeholder="7770000123456">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Holder Name</label>
+          <input type="text" class="form-input" id="bml-name" placeholder="Full name as in bank">
+        </div>
+        <button class="btn btn-primary" onclick="saveBMLBank()" style="margin-top:8px;">Save Maldives Bank ✅</button>
+      </div>
+
+      <!-- India Bank -->
+      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">INDIA RECIPIENT BANK (INR)</p>
+      <div style="background:var(--light);border-radius:16px;padding:20px;margin-bottom:20px;border:1.5px solid var(--border);">
+        <div class="form-group">
+          <label class="form-label">UPI Phone Number</label>
+          <div class="phone-row">
+            <div class="phone-code">🇮🇳 +91</div>
+            <input type="tel" class="phone-input" id="india-phone" placeholder="98765 43210" maxlength="10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Account Holder Name</label>
+          <input type="text" class="form-input" id="india-name" placeholder="Recipient full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bank Name (Optional)</label>
+          <input type="text" class="form-input" id="india-bank" placeholder="e.g. SBI, HDFC, ICICI">
+        </div>
+        <button class="btn btn-primary" onclick="saveIndiaBank()" style="margin-top:8px;">Save India Account ✅</button>
+      </div>
+
+      <!-- Saved accounts -->
+      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">SAVED ACCOUNTS</p>
+      <div id="saved-banks">
+        <div style="text-align:center;color:var(--gray);padding:20px;">No accounts saved yet</div>
+      </div>
+    </div>
+  </div>
+
   <!-- PROFILE -->
   <div class="screen" id="profile">
     <div class="page-header">
@@ -433,7 +493,7 @@
         </div>
       </div>
       <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-        <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;">
+        <div onclick="go('bank')" style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;cursor:pointer;">
           <div style="width:38px;height:38px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;">🏦</div>
           <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);">Bank Accounts</div>
           <span style="color:var(--gray);">›</span>
@@ -783,6 +843,65 @@ async function doTransfer() {
     btn.disabled = false;
     btn.innerHTML = '✅ &nbsp; Confirm & Send';
   }
+}
+
+// ── Bank Accounts ─────────────────────────────────────────────
+function saveBMLBank() {
+  const bank = document.getElementById('bml-bank').value;
+  const acc = document.getElementById('bml-acc').value.trim();
+  const name = document.getElementById('bml-name').value.trim();
+  if (!acc || !name) { showToast('❌ Fill all fields'); return; }
+  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
+  banks.push({ type: 'MVR', bank, acc, name, flag: '🇲🇻' });
+  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  showToast('✅ Maldives bank saved!');
+  loadSavedBanks();
+  document.getElementById('bml-acc').value = '';
+  document.getElementById('bml-name').value = '';
+}
+
+function saveIndiaBank() {
+  const phone = document.getElementById('india-phone').value.trim();
+  const name = document.getElementById('india-name').value.trim();
+  const bank = document.getElementById('india-bank').value.trim();
+  if (!phone || !name) { showToast('❌ Fill phone and name'); return; }
+  if (phone.length !== 10) { showToast('❌ Enter valid 10-digit phone'); return; }
+  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
+  banks.push({ type: 'INR', phone, name, bank, flag: '🇮🇳' });
+  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  showToast('✅ India account saved!');
+  loadSavedBanks();
+  document.getElementById('india-phone').value = '';
+  document.getElementById('india-name').value = '';
+  document.getElementById('india-bank').value = '';
+}
+
+function loadSavedBanks() {
+  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
+  const container = document.getElementById('saved-banks');
+  if (!banks.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:20px;">No accounts saved yet</div>';
+    return;
+  }
+  container.innerHTML = banks.map((b, i) => `
+    <div style="background:white;border-radius:14px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="width:44px;height:44px;background:var(--light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;">${b.flag}</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;color:var(--navy);font-size:14px;">${b.name}</div>
+        <div style="color:var(--gray);font-size:12px;margin-top:2px;">${b.type === 'MVR' ? b.bank + ' · ' + b.acc : '+91 ' + b.phone + (b.bank ? ' · ' + b.bank : '')}</div>
+      </div>
+      <div style="background:#fef2f2;border-radius:8px;padding:4px 10px;cursor:pointer;" onclick="deleteBank(${i})">
+        <span style="color:#ef4444;font-size:12px;">Delete</span>
+      </div>
+    </div>`).join('');
+}
+
+function deleteBank(i) {
+  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
+  banks.splice(i, 1);
+  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  showToast('🗑️ Account removed');
+  loadSavedBanks();
 }
 
 // ── History ───────────────────────────────────────────────────
