@@ -12,16 +12,30 @@
     --green: #059669; --orange: #f97316; --gray: #94a3b8;
     --light: #f7f8fa; --white: #ffffff; --border: #e2e8f0;
   }
-  body { font-family: 'DM Sans', sans-serif; background: var(--light); display: flex; justify-content: center; }
-  .app { width: 100%; max-width: 420px; min-height: 100vh; background: white; position: relative; }
+  [data-theme="dark"] {
+    --navy: #e2e8f0; --blue: #3b82f6; --accent: #60a5fa;
+    --green: #34d399; --orange: #fb923c; --gray: #64748b;
+    --light: #1e293b; --white: #0f172a; --border: #334155;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--white); display: flex; justify-content: center; transition: all 0.3s; }
+  .app { width: 100%; max-width: 420px; min-height: 100vh; background: var(--white); position: relative; }
   .screen { display: none; min-height: 100vh; flex-direction: column; }
   .screen.active { display: flex; }
 
   /* Splash */
-  #splash { background: linear-gradient(160deg, #1a3c6e, #0f2447); align-items: center; justify-content: center; }
-  .splash-icon { font-size: 72px; margin-bottom: 20px; }
-  .splash-title { color: white; font-size: 38px; font-weight: 800; }
-  .splash-sub { color: rgba(255,255,255,0.6); font-size: 15px; margin-top: 8px; }
+  #splash {
+    background: linear-gradient(160deg, #1a3c6e, #0f2447);
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  #splash::before { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; top: -50px; right: -80px; }
+  #splash::after { content: ''; position: absolute; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%; bottom: 50px; left: -60px; }
+  .splash-logo { width: 100px; height: 100px; background: rgba(255,255,255,0.15); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 52px; margin-bottom: 24px; border: 2px solid rgba(255,255,255,0.2); animation: popIn 0.6s cubic-bezier(0.68,-0.55,0.265,1.55); z-index: 1; }
+  .splash-title { color: white; font-size: 40px; font-weight: 800; letter-spacing: -1px; z-index: 1; }
+  .splash-sub { color: rgba(255,255,255,0.6); font-size: 15px; margin-top: 8px; z-index: 1; }
+  .splash-dots { display: flex; gap: 6px; margin-top: 48px; z-index: 1; }
+  .splash-dot { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.3); }
+  .splash-dot.active { width: 24px; background: white; }
 
   /* Hero */
   .hero { background: linear-gradient(160deg, #1a3c6e, #0f2447); padding: 60px 28px 48px; border-radius: 0 0 32px 32px; }
@@ -145,9 +159,14 @@
 
   <!-- SPLASH -->
   <div class="screen active" id="splash">
-    <div class="splash-icon">💸</div>
+    <div class="splash-logo">💸</div>
     <div class="splash-title">SendMV</div>
     <div class="splash-sub">Maldives → India Transfers</div>
+    <div class="splash-dots">
+      <div class="splash-dot active"></div>
+      <div class="splash-dot"></div>
+      <div class="splash-dot"></div>
+    </div>
   </div>
 
   <!-- WELCOME -->
@@ -401,7 +420,7 @@
     </div>
     <p style="color:var(--gray);font-size:13px;margin-bottom:24px;" id="suc-ref">Ref: #TXN000000</p>
     <button class="btn btn-primary" style="width:100%;" onclick="go('home')">Back to Home</button>
-    <button class="btn btn-outline mt-16" style="width:100%;" onclick="showToast('Receipt copied! 📋')">📤 Share Receipt</button>
+    <button class="btn btn-outline mt-16" style="width:100%;" onclick="downloadReceipt()">📄 &nbsp; Download Receipt</button>
   </div>
 
   <!-- HISTORY -->
@@ -448,24 +467,76 @@
       </div>
 
       <!-- India Bank -->
-      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">INDIA RECIPIENT BANK (INR)</p>
+      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">INDIA RECIPIENT ACCOUNT (INR)</p>
       <div style="background:var(--light);border-radius:16px;padding:20px;margin-bottom:20px;border:1.5px solid var(--border);">
-        <div class="form-group">
-          <label class="form-label">UPI Phone Number</label>
-          <div class="phone-row">
-            <div class="phone-code">🇮🇳 +91</div>
-            <input type="tel" class="phone-input" id="india-phone" placeholder="98765 43210" maxlength="10">
+
+        <!-- Transfer type selector -->
+        <div style="display:flex;gap:10px;margin-bottom:20px;">
+          <button id="upi-tab" onclick="switchIndiaTab('upi')" style="flex:1;padding:12px;border-radius:12px;border:2px solid #1a3c6e;background:#1a3c6e;color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">
+            📱 UPI
+          </button>
+          <button id="bank-tab" onclick="switchIndiaTab('bank')" style="flex:1;padding:12px;border-radius:12px;border:2px solid var(--border);background:white;color:var(--navy);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">
+            🏦 Bank Transfer
+          </button>
+        </div>
+
+        <!-- UPI Section -->
+        <div id="upi-section">
+          <div class="form-group">
+            <label class="form-label">UPI Phone Number</label>
+            <div class="phone-row">
+              <div class="phone-code">🇮🇳 +91</div>
+              <input type="tel" class="phone-input" id="india-phone" placeholder="98765 43210" maxlength="10">
+            </div>
           </div>
+          <div class="form-group">
+            <label class="form-label">Account Holder Name</label>
+            <input type="text" class="form-input" id="india-upi-name" placeholder="Recipient full name">
+          </div>
+          <p style="color:var(--gray);font-size:12px;margin-bottom:16px;">💡 Money arrives instantly to any UPI linked phone</p>
+          <button class="btn btn-primary" onclick="saveIndiaUPI()">Save UPI Account ✅</button>
         </div>
-        <div class="form-group">
-          <label class="form-label">Account Holder Name</label>
-          <input type="text" class="form-input" id="india-name" placeholder="Recipient full name">
+
+        <!-- Bank Transfer Section -->
+        <div id="bank-section" style="display:none;">
+          <div class="form-group">
+            <label class="form-label">Account Holder Name</label>
+            <input type="text" class="form-input" id="india-acc-name" placeholder="Full name as in bank">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bank Name</label>
+            <select class="form-input" id="india-bank-name">
+              <option>State Bank of India (SBI)</option>
+              <option>HDFC Bank</option>
+              <option>ICICI Bank</option>
+              <option>Axis Bank</option>
+              <option>Punjab National Bank</option>
+              <option>Bank of Baroda</option>
+              <option>Canara Bank</option>
+              <option>Kotak Mahindra Bank</option>
+              <option>IndusInd Bank</option>
+              <option>Yes Bank</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Account Number</label>
+            <input type="tel" class="form-input" id="india-acc-num" placeholder="1234567890123456">
+          </div>
+          <div class="form-group">
+            <label class="form-label">IFSC Code</label>
+            <input type="text" class="form-input" id="india-ifsc" placeholder="SBIN0001234" style="text-transform:uppercase;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Account Type</label>
+            <select class="form-input" id="india-acc-type">
+              <option>Savings Account</option>
+              <option>Current Account</option>
+            </select>
+          </div>
+          <p style="color:var(--gray);font-size:12px;margin-bottom:16px;">💡 Money arrives via IMPS/NEFT in 30 minutes</p>
+          <button class="btn btn-primary" onclick="saveIndiaBankTransfer()">Save Bank Account ✅</button>
         </div>
-        <div class="form-group">
-          <label class="form-label">Bank Name (Optional)</label>
-          <input type="text" class="form-input" id="india-bank" placeholder="e.g. SBI, HDFC, ICICI">
-        </div>
-        <button class="btn btn-primary" onclick="saveIndiaBank()" style="margin-top:8px;">Save India Account ✅</button>
       </div>
 
       <!-- Saved accounts -->
@@ -498,6 +569,21 @@
           <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);">Bank Accounts</div>
           <span style="color:var(--gray);">›</span>
         </div>
+        <div onclick="go('referral')" style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;cursor:pointer;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;font-size:18px;">🎁</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Refer & Earn</div>
+            <div style="font-size:12px;color:var(--green);">Earn MVR 20 per referral!</div>
+          </div>
+          <span style="color:var(--gray);">›</span>
+        </div>
+        <div onclick="toggleDark()" style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;cursor:pointer;">
+          <div style="width:38px;height:38px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;" id="dark-icon">🌙</div>
+          <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);" id="dark-label">Dark Mode</div>
+          <div style="width:44px;height:24px;background:var(--border);border-radius:12px;position:relative;transition:all 0.3s;" id="dark-toggle">
+            <div style="width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:all 0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.2);" id="dark-thumb"></div>
+          </div>
+        </div>
         <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;">
           <div style="width:38px;height:38px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;">🔒</div>
           <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);">Security</div>
@@ -513,6 +599,70 @@
           <div style="flex:1;font-size:14px;font-weight:600;color:#ef4444;">Logout</div>
           <span style="color:#ef4444;">›</span>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERRAL -->
+  <div class="screen" id="referral">
+    <div class="page-header">
+      <button class="back-btn" onclick="go('profile')">←</button>
+      <div class="page-title">Refer & Earn 🎁</div>
+      <div class="page-sub">Invite friends and earn MVR 20!</div>
+    </div>
+    <div class="page-body with-nav">
+      <!-- Earnings summary -->
+      <div style="background:linear-gradient(135deg,#059669,#047857);border-radius:20px;padding:24px;text-align:center;margin-bottom:24px;">
+        <div style="color:rgba(255,255,255,0.8);font-size:13px;">Total Earnings</div>
+        <div style="color:white;font-size:40px;font-weight:800;margin-top:4px;" id="ref-earnings">MVR 0</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-top:4px;" id="ref-count">0 friends referred</div>
+      </div>
+
+      <!-- Referral code -->
+      <div style="background:var(--light);border-radius:16px;padding:20px;margin-bottom:20px;border:1.5px dashed var(--border);">
+        <div style="text-align:center;">
+          <div style="font-size:13px;color:var(--gray);margin-bottom:8px;">Your Referral Code</div>
+          <div style="font-size:32px;font-weight:800;color:var(--navy);letter-spacing:4px;" id="ref-code">SENDMV00</div>
+          <button onclick="copyRefCode()" style="margin-top:12px;padding:10px 24px;background:var(--navy);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+            📋 Copy Code
+          </button>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">How it works</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:32px;height:32px;background:#1a3c6e;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">1</div>
+            <div><div style="font-weight:600;color:var(--navy);font-size:14px;">Share your code</div><div style="color:var(--gray);font-size:12px;">Share with friends & family in Maldives</div></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:32px;height:32px;background:#1a3c6e;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">2</div>
+            <div><div style="font-weight:600;color:var(--navy);font-size:14px;">Friend signs up</div><div style="color:var(--gray);font-size:12px;">They use your code when creating account</div></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div style="width:32px;height:32px;background:#059669;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">3</div>
+            <div><div style="font-weight:600;color:var(--navy);font-size:14px;">You earn MVR 20!</div><div style="color:var(--gray);font-size:12px;">Added to your wallet after first transfer</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Share buttons -->
+      <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">Share via</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <button onclick="shareWhatsApp()" style="padding:14px;background:#25D366;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+          💬 WhatsApp
+        </button>
+        <button onclick="shareTelegram()" style="padding:14px;background:#0088cc;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+          ✈️ Telegram
+        </button>
+        <button onclick="shareSMS()" style="padding:14px;background:var(--navy);color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+          📱 SMS
+        </button>
+        <button onclick="shareLink()" style="padding:14px;background:var(--light);color:var(--navy);border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+          🔗 Copy Link
+        </button>
       </div>
     </div>
   </div>
@@ -558,21 +708,20 @@ function showToast(msg) {
 function go(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const s = document.getElementById(id);
+  if (!s) return;
   s.classList.add('active');
   s.classList.add('slide-up');
   setTimeout(() => s.classList.remove('slide-up'), 300);
-  const mainScreens = ['home','send','history','profile','recipient','confirm','success'];
   const nav = document.getElementById('bottom-nav');
-  if (mainScreens.includes(id) && state.token) {
-    nav.style.display = 'flex';
-    ['home','send','history','profile'].forEach(n => {
-      document.getElementById('nav-'+n)?.classList.toggle('active', n === id);
-    });
-  } else {
-    nav.style.display = 'none';
-  }
-  if (id === 'home') loadHome();
-  if (id === 'history') loadHistory();
+  const showNav = ['home','send','history','profile','bank','referral','recipient','confirm','success'].includes(id);
+  nav.style.display = (showNav && state.token) ? 'flex' : 'none';
+  ['home','send','history','profile'].forEach(n => {
+    document.getElementById('nav-'+n)?.classList.toggle('active', n === id);
+  });
+  if (id === 'home') setTimeout(loadHome, 100);
+  if (id === 'history') setTimeout(loadHistory, 100);
+  if (id === 'referral') setTimeout(loadReferral, 100);
+  if (id === 'bank') setTimeout(loadSavedBanks, 100);
 }
 
 function navTo(id) { go(id); }
@@ -587,14 +736,38 @@ async function apiFetch(path, opts = {}) {
 // ── Live Rate ─────────────────────────────────────────────────
 async function fetchRate() {
   try {
-    const data = await apiFetch('/api/rates/mvr-inr');
-    if (data.rate) {
-      state.rate = data.rate;
-      document.getElementById('welcome-rate').textContent = `1 MVR = ${state.rate.toFixed(2)} INR`;
-      document.getElementById('home-rate').textContent = `1 MVR = ${state.rate.toFixed(2)} INR`;
-      document.getElementById('fee-rate').textContent = `1 MVR = ${state.rate.toFixed(2)} INR`;
+    // Use free external API directly - no backend needed!
+    const res = await fetch('https://open.er-api.com/v6/latest/MVR');
+    const data = await res.json();
+    if (data.rates && data.rates.INR) {
+      state.rate = data.rates.INR;
+      updateRateDisplay();
+      return;
     }
-  } catch(e) { console.log('Rate fetch failed, using fallback'); }
+  } catch(e) {}
+  try {
+    // Second fallback API
+    const res2 = await fetch('https://api.exchangerate-api.com/v4/latest/MVR');
+    const data2 = await res2.json();
+    if (data2.rates && data2.rates.INR) {
+      state.rate = data2.rates.INR;
+      updateRateDisplay();
+      return;
+    }
+  } catch(e) {}
+  // Final fallback - use default rate
+  state.rate = 4.82;
+  updateRateDisplay();
+}
+
+function updateRateDisplay() {
+  const rateText = `1 MVR = ${state.rate.toFixed(2)} INR`;
+  const welcomeRate = document.getElementById('welcome-rate');
+  const homeRate = document.getElementById('home-rate');
+  const feeRate = document.getElementById('fee-rate');
+  if (welcomeRate) welcomeRate.textContent = rateText;
+  if (homeRate) homeRate.textContent = rateText;
+  if (feeRate) feeRate.textContent = rateText;
 }
 
 // ── Splash ────────────────────────────────────────────────────
@@ -860,20 +1033,62 @@ function saveBMLBank() {
   document.getElementById('bml-name').value = '';
 }
 
-function saveIndiaBank() {
+function switchIndiaTab(tab) {
+  const upiSection = document.getElementById('upi-section');
+  const bankSection = document.getElementById('bank-section');
+  const upiTab = document.getElementById('upi-tab');
+  const bankTab = document.getElementById('bank-tab');
+  if (tab === 'upi') {
+    upiSection.style.display = 'block';
+    bankSection.style.display = 'none';
+    upiTab.style.background = '#1a3c6e';
+    upiTab.style.color = 'white';
+    upiTab.style.borderColor = '#1a3c6e';
+    bankTab.style.background = 'white';
+    bankTab.style.color = '#0f2447';
+    bankTab.style.borderColor = '#e2e8f0';
+  } else {
+    upiSection.style.display = 'none';
+    bankSection.style.display = 'block';
+    bankTab.style.background = '#1a3c6e';
+    bankTab.style.color = 'white';
+    bankTab.style.borderColor = '#1a3c6e';
+    upiTab.style.background = 'white';
+    upiTab.style.color = '#0f2447';
+    upiTab.style.borderColor = '#e2e8f0';
+  }
+}
+
+function saveIndiaUPI() {
   const phone = document.getElementById('india-phone').value.trim();
-  const name = document.getElementById('india-name').value.trim();
-  const bank = document.getElementById('india-bank').value.trim();
-  if (!phone || !name) { showToast('❌ Fill phone and name'); return; }
+  const name = document.getElementById('india-upi-name').value.trim();
+  if (!phone || !name) { showToast('❌ Fill all fields'); return; }
   if (phone.length !== 10) { showToast('❌ Enter valid 10-digit phone'); return; }
   const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
-  banks.push({ type: 'INR', phone, name, bank, flag: '🇮🇳' });
+  banks.push({ type: 'UPI', phone, name, flag: '🇮🇳', method: 'UPI' });
   localStorage.setItem('sendmv_banks', JSON.stringify(banks));
-  showToast('✅ India account saved!');
+  showToast('✅ UPI account saved!');
   loadSavedBanks();
   document.getElementById('india-phone').value = '';
-  document.getElementById('india-name').value = '';
-  document.getElementById('india-bank').value = '';
+  document.getElementById('india-upi-name').value = '';
+}
+
+function saveIndiaBankTransfer() {
+  const name = document.getElementById('india-acc-name').value.trim();
+  const bankName = document.getElementById('india-bank-name').value;
+  const accNum = document.getElementById('india-acc-num').value.trim();
+  const ifsc = document.getElementById('india-ifsc').value.trim().toUpperCase();
+  const accType = document.getElementById('india-acc-type').value;
+  if (!name || !accNum || !ifsc) { showToast('❌ Fill all required fields'); return; }
+  if (ifsc.length !== 11) { showToast('❌ IFSC must be 11 characters'); return; }
+  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
+  banks.push({ type: 'BANK', name, bankName, accNum, ifsc, accType, flag: '🇮🇳', method: 'Bank Transfer' });
+  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  showToast('✅ Bank account saved!');
+  loadSavedBanks();
+  document.getElementById('india-acc-name').value = '';
+  document.getElementById('india-acc-num').value = '';
+  document.getElementById('india-ifsc').value = '';
 }
 
 function loadSavedBanks() {
@@ -903,6 +1118,101 @@ function deleteBank(i) {
   showToast('🗑️ Account removed');
   loadSavedBanks();
 }
+
+// ── Dark Mode ─────────────────────────────────────────────────
+function toggleDark() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('dark-icon').textContent = '🌙';
+    document.getElementById('dark-label').textContent = 'Dark Mode';
+    document.getElementById('dark-toggle').style.background = '#e2e8f0';
+    document.getElementById('dark-thumb').style.left = '2px';
+    localStorage.setItem('sendmv_theme', 'light');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('dark-icon').textContent = '☀️';
+    document.getElementById('dark-label').textContent = 'Light Mode';
+    document.getElementById('dark-toggle').style.background = '#1a3c6e';
+    document.getElementById('dark-thumb').style.left = '22px';
+    localStorage.setItem('sendmv_theme', 'dark');
+  }
+}
+if (localStorage.getItem('sendmv_theme') === 'dark') {
+  document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+// ── Referral ──────────────────────────────────────────────────
+function loadReferral() {
+  const user = state.user;
+  if (!user) return;
+  const code = 'SMV' + (user.phone || user.email || '').slice(-4).toUpperCase().replace(/[^A-Z0-9]/g, '0');
+  document.getElementById('ref-code').textContent = code;
+  const refs = JSON.parse(localStorage.getItem('sendmv_refs') || '[]');
+  document.getElementById('ref-earnings').textContent = 'MVR ' + (refs.length * 20);
+  document.getElementById('ref-count').textContent = refs.length + ' friends referred';
+}
+
+function copyRefCode() {
+  const code = document.getElementById('ref-code').textContent;
+  navigator.clipboard?.writeText(code).catch(() => {});
+  showToast('✅ Code copied: ' + code);
+}
+
+function shareWhatsApp() {
+  const code = document.getElementById('ref-code').textContent;
+  const msg = `Hey! Use SendMV to send money from Maldives to India instantly! Use my code ${code} to get MVR 10 off your first transfer! 👉 https://sharukg703-art.github.io/Sendmv/sendmv-login.html`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg));
+}
+
+function shareTelegram() {
+  const code = document.getElementById('ref-code').textContent;
+  const msg = `Use SendMV! Code: ${code} for MVR 10 off.`;
+  window.open('https://t.me/share/url?url=https://sharukg703-art.github.io/Sendmv/sendmv-login.html&text=' + encodeURIComponent(msg));
+}
+
+function shareSMS() {
+  const code = document.getElementById('ref-code').textContent;
+  const msg = `Use SendMV app! Code: ${code} for MVR 10 off. https://sharukg703-art.github.io/Sendmv/sendmv-login.html`;
+  window.open('sms:?body=' + encodeURIComponent(msg));
+}
+
+function shareLink() {
+  navigator.clipboard?.writeText('https://sharukg703-art.github.io/Sendmv/sendmv-login.html').catch(() => {});
+  showToast('🔗 Link copied!');
+}
+
+// ── Receipt Download ──────────────────────────────────────────
+function downloadReceipt() {
+  const ref = document.getElementById('suc-ref').textContent;
+  const mvr = document.getElementById('suc-mvr').textContent;
+  const inr = document.getElementById('suc-inr').textContent;
+  const date = new Date().toLocaleString();
+  const receipt = `SENDMV TRANSFER RECEIPT\n${'='.repeat(30)}\n${ref}\nDate: ${date}\n${'-'.repeat(30)}\nFrom: ${state.user?.name || 'User'}\nTo: ${state.recName}\nPhone: +91 ${state.recPhone}\n${'-'.repeat(30)}\nAmount Sent: ${mvr}\nAmount Received: ${inr}\nFee: MVR 10\nRate: 1 MVR = ${state.rate.toFixed(2)} INR\nStatus: Completed\n${'='.repeat(30)}\nPowered by SendMV`;
+  const blob = new Blob([receipt], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = ref + '-receipt.txt';
+  a.click();
+  showToast('📄 Receipt downloaded!');
+}
+
+// ── Security: Auto logout ─────────────────────────────────────
+let inactivityTimer;
+function resetTimer() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    if (state.token) {
+      showToast('⏱️ Session expired. Login again.');
+      setTimeout(doLogout, 2000);
+    }
+  }, 30 * 60 * 1000); // 30 minutes
+}
+document.addEventListener('touchstart', resetTimer);
+document.addEventListener('click', resetTimer);
+resetTimer();
+
+// go() is already defined above with all screen handling
 
 // ── History ───────────────────────────────────────────────────
 async function loadHistory() {
