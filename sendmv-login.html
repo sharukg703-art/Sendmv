@@ -1,703 +1,898 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>SendMV – Maldives to India Transfers</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  :root {
-    --navy: #0f2447; --blue: #1a3c6e; --accent: #2563eb;
-    --green: #059669; --orange: #f97316; --gray: #94a3b8;
-    --light: #f7f8fa; --white: #ffffff; --border: #e2e8f0;
-  }
-  [data-theme="dark"] {
-    --navy: #e2e8f0; --blue: #3b82f6; --accent: #60a5fa;
-    --green: #34d399; --orange: #fb923c; --gray: #64748b;
-    --light: #1e293b; --white: #0f172a; --border: #334155;
-  }
-  body { font-family: 'DM Sans', sans-serif; background: var(--white); display: flex; justify-content: center; transition: all 0.3s; }
-  .app { width: 100%; max-width: 420px; min-height: 100vh; background: var(--white); position: relative; }
-  .screen { display: none; min-height: 100vh; flex-direction: column; }
-  .screen.active { display: flex; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --navy:#0f2447; --blue:#1a3c6e; --accent:#2563eb;
+  --green:#059669; --orange:#f97316; --gray:#94a3b8;
+  --light:#f7f8fa; --white:#ffffff; --border:#e2e8f0;
+  --card:#ffffff; --bg:#f7f8fa; --text:#0f2447;
+}
+[data-theme="dark"] {
+  --navy:#e2e8f0; --blue:#3b82f6; --accent:#60a5fa;
+  --green:#34d399; --orange:#fb923c; --gray:#64748b;
+  --light:#1e293b; --white:#0f172a; --border:#334155;
+  --card:#1e293b; --bg:#0f172a; --text:#e2e8f0;
+}
+body { font-family:'DM Sans',sans-serif; background:var(--bg); display:flex; justify-content:center; transition:background 0.3s; }
+.app { width:100%; max-width:420px; min-height:100vh; background:var(--card); position:relative; overflow:hidden; }
+.screen { display:none; min-height:100vh; flex-direction:column; background:var(--card); }
+.screen.active { display:flex; }
 
-  /* Splash */
-  #splash {
-    background: linear-gradient(160deg, #1a3c6e, #0f2447);
-    align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-  #splash::before { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; top: -50px; right: -80px; }
-  #splash::after { content: ''; position: absolute; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%; bottom: 50px; left: -60px; }
-  .splash-logo { width: 100px; height: 100px; background: rgba(255,255,255,0.15); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 52px; margin-bottom: 24px; border: 2px solid rgba(255,255,255,0.2); animation: popIn 0.6s cubic-bezier(0.68,-0.55,0.265,1.55); z-index: 1; }
-  .splash-title { color: white; font-size: 40px; font-weight: 800; letter-spacing: -1px; z-index: 1; }
-  .splash-sub { color: rgba(255,255,255,0.6); font-size: 15px; margin-top: 8px; z-index: 1; }
-  .splash-dots { display: flex; gap: 6px; margin-top: 48px; z-index: 1; }
-  .splash-dot { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.3); }
-  .splash-dot.active { width: 24px; background: white; }
+/* Splash */
+#splash { background:linear-gradient(160deg,#1a3c6e,#0f2447); align-items:center; justify-content:center; position:relative; overflow:hidden; }
+#splash::before { content:''; position:absolute; width:300px; height:300px; background:rgba(255,255,255,0.05); border-radius:50%; top:-50px; right:-80px; }
+#splash::after { content:''; position:absolute; width:200px; height:200px; background:rgba(255,255,255,0.05); border-radius:50%; bottom:50px; left:-60px; }
+.splash-logo { width:100px; height:100px; background:rgba(255,255,255,0.15); border-radius:28px; display:flex; align-items:center; justify-content:center; font-size:52px; margin-bottom:20px; border:2px solid rgba(255,255,255,0.2); z-index:1; animation:popIn 0.6s cubic-bezier(0.68,-0.55,0.265,1.55); }
+.splash-title { color:white; font-size:40px; font-weight:800; z-index:1; }
+.splash-sub { color:rgba(255,255,255,0.6); font-size:15px; margin-top:8px; z-index:1; }
+.splash-dots { display:flex; gap:6px; margin-top:48px; z-index:1; }
+.splash-dot { width:8px; height:8px; border-radius:4px; background:rgba(255,255,255,0.3); }
+.splash-dot.active { width:24px; background:white; }
 
-  /* Hero */
-  .hero { background: linear-gradient(160deg, #1a3c6e, #0f2447); padding: 60px 28px 48px; border-radius: 0 0 32px 32px; }
-  .hero-logo { color: white; font-size: 28px; font-weight: 800; margin-bottom: 28px; }
-  .hero-title { color: white; font-size: 26px; font-weight: 800; }
-  .hero-sub { color: rgba(255,255,255,0.65); font-size: 14px; margin-top: 6px; }
-  .rate-pill { display: inline-flex; gap: 8px; background: rgba(255,255,255,0.12); border-radius: 50px; padding: 8px 16px; margin-top: 16px; border: 1px solid rgba(255,255,255,0.2); }
-  .rate-pill span { color: white; font-size: 13px; font-weight: 600; }
-  .rate-val { color: #86efac !important; }
+/* Hero */
+.hero { background:linear-gradient(160deg,#1a3c6e,#0f2447); padding:60px 28px 48px; border-radius:0 0 32px 32px; }
+.hero-logo { color:white; font-size:26px; font-weight:800; margin-bottom:24px; }
+.hero-title { color:white; font-size:26px; font-weight:800; }
+.hero-sub { color:rgba(255,255,255,0.65); font-size:14px; margin-top:6px; }
+.rate-pill { display:inline-flex; gap:8px; background:rgba(255,255,255,0.12); border-radius:50px; padding:8px 16px; margin-top:16px; border:1px solid rgba(255,255,255,0.2); }
+.rate-pill span { color:white; font-size:13px; font-weight:600; }
+.rate-val { color:#86efac !important; }
 
-  /* Buttons */
-  .btn { width: 100%; padding: 17px; border: none; border-radius: 16px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-  .btn-primary { background: linear-gradient(135deg, #1a3c6e, #0f2447); color: white; box-shadow: 0 8px 24px rgba(26,60,110,0.3); }
-  .btn-outline { background: white; color: var(--navy); border: 1.5px solid var(--border); }
-  .btn-green { background: linear-gradient(135deg, #059669, #047857); color: white; }
-  .btn:active { transform: scale(0.98); }
-  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+/* Buttons */
+.btn { width:100%; padding:17px; border:none; border-radius:16px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:700; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+.btn-primary { background:linear-gradient(135deg,#1a3c6e,#0f2447); color:white; box-shadow:0 8px 24px rgba(26,60,110,0.3); }
+.btn-outline { background:var(--card); color:var(--navy); border:1.5px solid var(--border); }
+.btn-green { background:linear-gradient(135deg,#059669,#047857); color:white; box-shadow:0 8px 24px rgba(5,150,105,0.25); }
+.btn:active { transform:scale(0.98); }
+.btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
 
-  /* Forms */
-  .page-header { background: linear-gradient(160deg, #1a3c6e, #0f2447); padding: 52px 24px 32px; border-radius: 0 0 28px 28px; }
-  .back-btn { background: rgba(255,255,255,0.15); border: none; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: white; margin-bottom: 16px; }
-  .page-title { color: white; font-size: 24px; font-weight: 800; }
-  .page-sub { color: rgba(255,255,255,0.65); font-size: 14px; margin-top: 4px; }
-  .page-body { padding: 28px 24px; flex: 1; overflow-y: auto; }
-  .form-group { margin-bottom: 18px; }
-  .form-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px; display: block; }
-  .form-input { width: 100%; padding: 15px 16px; border: 1.5px solid var(--border); border-radius: 14px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--navy); background: var(--light); outline: none; transition: border-color 0.2s; }
-  .form-input:focus { border-color: var(--accent); background: white; }
-  .phone-row { display: flex; border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--light); }
-  .phone-row:focus-within { border-color: var(--accent); }
-  .phone-code { padding: 15px 14px; border-right: 1.5px solid var(--border); font-weight: 600; font-size: 14px; color: var(--navy); white-space: nowrap; }
-  .phone-input { flex: 1; padding: 15px 14px; border: none; background: transparent; font-size: 15px; color: var(--navy); outline: none; font-family: 'DM Sans', sans-serif; }
-  .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
-  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .divider span { color: var(--gray); font-size: 13px; }
-  .link { color: var(--accent); font-weight: 600; cursor: pointer; }
+/* Page */
+.page-header { background:linear-gradient(160deg,#1a3c6e,#0f2447); padding:52px 24px 32px; border-radius:0 0 28px 28px; }
+.back-btn { background:rgba(255,255,255,0.15); border:none; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:white; margin-bottom:16px; }
+.page-title { color:white; font-size:24px; font-weight:800; }
+.page-sub { color:rgba(255,255,255,0.65); font-size:14px; margin-top:4px; }
+.page-body { padding:24px; flex:1; overflow-y:auto; background:var(--bg); }
 
-  /* OTP */
-  .otp-wrap { display: flex; gap: 10px; justify-content: center; margin: 24px 0; }
-  .otp-box { width: 50px; height: 56px; border: 2px solid var(--border); border-radius: 14px; font-size: 22px; font-weight: 800; text-align: center; color: var(--navy); background: var(--light); outline: none; }
-  .otp-box:focus { border-color: var(--accent); background: white; }
+/* Forms */
+.form-group { margin-bottom:18px; }
+.form-label { font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px; display:block; }
+.form-input { width:100%; padding:15px 16px; border:1.5px solid var(--border); border-radius:14px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--text); background:var(--light); outline:none; transition:border-color 0.2s; }
+.form-input:focus { border-color:var(--accent); background:var(--card); }
+.phone-row { display:flex; border:1.5px solid var(--border); border-radius:14px; overflow:hidden; background:var(--light); }
+.phone-row:focus-within { border-color:var(--accent); }
+.phone-code { padding:15px 14px; border-right:1.5px solid var(--border); font-weight:600; font-size:14px; color:var(--text); white-space:nowrap; background:transparent; }
+.phone-input { flex:1; padding:15px 14px; border:none; background:transparent; font-size:15px; color:var(--text); outline:none; font-family:'DM Sans',sans-serif; }
+.divider { display:flex; align-items:center; gap:12px; margin:20px 0; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.divider span { color:var(--gray); font-size:13px; }
+.link { color:var(--accent); font-weight:600; cursor:pointer; }
 
-  /* Home */
-  .home-hero { background: linear-gradient(160deg, #1a3c6e, #0f2447); padding: 52px 24px 72px; border-radius: 0 0 32px 32px; }
-  .home-toprow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-  .greeting { color: rgba(255,255,255,0.7); font-size: 13px; }
-  .username { color: white; font-size: 20px; font-weight: 700; }
-  .rate-card { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.15); }
-  .rate-label { color: rgba(255,255,255,0.65); font-size: 12px; }
-  .rate-value { color: white; font-size: 26px; font-weight: 800; margin-top: 4px; }
-  .home-body { padding: 0 20px 100px; margin-top: -40px; }
-  .quick-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); display: flex; justify-content: space-around; margin-bottom: 16px; }
-  .quick-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 10px 16px; border-radius: 14px; border: none; background: none; font-family: 'DM Sans', sans-serif; }
-  .quick-btn .ql { font-size: 12px; font-weight: 600; color: var(--navy); }
-  .send-cta { width: 100%; padding: 18px; background: linear-gradient(135deg, #1a3c6e, #0f2447); color: white; border: none; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(26,60,110,0.25); }
-  .section-title { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
-  .tx-card { background: white; border-radius: 16px; padding: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-  .tx-flag { width: 44px; height: 44px; background: #f0f4ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-  .tx-name { font-weight: 600; color: var(--navy); font-size: 14px; }
-  .tx-date { color: var(--gray); font-size: 12px; }
-  .tx-amount { text-align: right; margin-left: auto; }
-  .tx-mvr { font-weight: 700; color: var(--navy); }
-  .tx-status { color: var(--green); font-size: 12px; }
+/* OTP */
+.otp-wrap { display:flex; gap:10px; justify-content:center; margin:24px 0; }
+.otp-box { width:50px; height:56px; border:2px solid var(--border); border-radius:14px; font-size:22px; font-weight:800; text-align:center; color:var(--text); background:var(--light); outline:none; }
+.otp-box:focus { border-color:var(--accent); background:var(--card); }
 
-  /* Send */
-  .amount-box { border-radius: 20px; padding: 24px; margin-bottom: 12px; }
-  .amount-box.send-box { background: var(--light); }
-  .amount-box.recv-box { background: #f0f7ff; border: 2px solid #dbeafe; }
-  .amount-label { color: var(--gray); font-size: 13px; margin-bottom: 10px; }
-  .amount-row { display: flex; align-items: center; gap: 12px; }
-  .curr-badge { padding: 8px 12px; border-radius: 10px; font-weight: 700; font-size: 14px; color: white; white-space: nowrap; }
-  .curr-mvr { background: var(--navy); }
-  .curr-inr { background: var(--orange); }
-  .amount-input { flex: 1; border: none; background: transparent; font-size: 32px; font-weight: 800; color: var(--navy); text-align: right; outline: none; font-family: 'DM Sans', sans-serif; width: 0; }
-  .amount-display { flex: 1; font-size: 32px; font-weight: 800; color: var(--navy); text-align: right; }
-  .fee-table { background: var(--light); border-radius: 14px; padding: 14px 16px; margin-top: 12px; }
-  .fee-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); }
-  .fee-row:last-child { border-bottom: none; }
-  .fee-label { color: var(--gray); font-size: 13px; }
-  .fee-val { color: var(--navy); font-size: 13px; font-weight: 600; }
+/* PIN */
+.pin-wrap { display:flex; gap:12px; justify-content:center; margin:24px 0; }
+.pin-dot { width:52px; height:52px; border-radius:14px; border:2px solid var(--border); background:var(--light); display:flex; align-items:center; justify-content:center; font-size:24px; color:white; transition:all 0.2s; }
+.pin-dot.filled { background:#1a3c6e; border-color:#1a3c6e; }
+.numpad { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.num-key { padding:18px; border-radius:14px; border:1.5px solid var(--border); background:var(--card); font-size:20px; font-weight:700; color:var(--text); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.1s; }
+.num-key:active { background:var(--light); transform:scale(0.95); }
+.num-key.empty { border:none; background:transparent; cursor:default; }
 
-  /* Confirm */
-  .confirm-card { background: linear-gradient(160deg, #1a3c6e, #0f2447); border-radius: 24px; padding: 32px; text-align: center; margin-bottom: 16px; }
-  .detail-card { background: var(--light); border-radius: 16px; padding: 20px; }
-  .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .detail-row:last-child { border-bottom: none; }
+/* Home */
+.home-hero { background:linear-gradient(160deg,#1a3c6e,#0f2447); padding:52px 24px 72px; border-radius:0 0 32px 32px; }
+.home-toprow { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.rate-card { background:rgba(255,255,255,0.12); border-radius:20px; padding:20px; border:1px solid rgba(255,255,255,0.15); }
+.home-body { padding:0 20px 100px; margin-top:-40px; }
+.quick-card { background:var(--card); border-radius:20px; padding:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+.quick-btn { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; padding:10px 4px; border-radius:12px; border:none; background:none; font-family:'DM Sans',sans-serif; transition:background 0.2s; }
+.quick-btn:active { background:var(--light); }
+.quick-btn .ql { font-size:11px; font-weight:600; color:var(--text); }
+.send-cta { width:100%; padding:18px; background:linear-gradient(135deg,#1a3c6e,#0f2447); color:white; border:none; border-radius:16px; font-size:16px; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif; margin-bottom:20px; box-shadow:0 8px 24px rgba(26,60,110,0.25); }
+.section-title { font-size:16px; font-weight:700; color:var(--text); margin-bottom:12px; }
+.tx-card { background:var(--card); border-radius:16px; padding:16px; margin-bottom:10px; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 
-  /* Success */
-  #success { align-items: center; justify-content: center; padding: 32px 24px; }
-  .success-icon { width: 100px; height: 100px; background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; box-shadow: 0 0 0 16px #f0fdf4; margin-bottom: 28px; }
-  .success-card { background: var(--light); border-radius: 20px; padding: 24px; width: 100%; border: 1.5px solid var(--border); margin: 24px 0; }
+/* Send */
+.amount-box { border-radius:20px; padding:24px; margin-bottom:12px; }
+.amount-box.send-box { background:var(--light); }
+.amount-box.recv-box { background:#f0f7ff; border:2px solid #dbeafe; }
+.amount-input { flex:1; border:none; background:transparent; font-size:32px; font-weight:800; color:var(--text); text-align:right; outline:none; font-family:'DM Sans',sans-serif; width:0; }
+.curr-badge { padding:8px 12px; border-radius:10px; font-weight:700; font-size:14px; color:white; white-space:nowrap; }
+.curr-mvr { background:#0f2447; }
+.curr-inr { background:#f97316; }
 
-  /* Bottom Nav */
-  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: white; border-top: 1px solid var(--border); display: flex; padding: 8px 0 16px; z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.08); }
-  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px; border: none; background: none; font-family: 'DM Sans', sans-serif; }
-  .nav-icon { font-size: 22px; }
-  .nav-label { font-size: 11px; font-weight: 600; color: var(--gray); }
-  .nav-item.active .nav-label { color: var(--accent); }
+/* Bottom Nav */
+.bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:420px; background:var(--card); border-top:1px solid var(--border); display:flex; padding:8px 0 16px; z-index:100; box-shadow:0 -4px 20px rgba(0,0,0,0.08); }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:8px; border:none; background:none; font-family:'DM Sans',sans-serif; }
+.nav-icon { font-size:22px; }
+.nav-label { font-size:11px; font-weight:600; color:var(--gray); }
+.nav-item.active .nav-label { color:var(--accent); }
 
-  /* Toast */
-  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; font-weight: 600; z-index: 999; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.2); white-space: nowrap; }
-  .toast.show { display: block; animation: slideDown 0.3s ease; }
+/* Toast */
+.toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#0f2447; color:white; padding:12px 24px; border-radius:50px; font-size:14px; font-weight:600; z-index:999; display:none; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
+.toast.show { display:block; animation:slideDown 0.3s ease; }
 
-  /* Loading */
-  .loader { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; }
+/* Notification badge */
+.notif-badge { position:absolute; top:-4px; right:-4px; width:16px; height:16px; background:#ef4444; border-radius:50%; font-size:10px; color:white; display:flex; align-items:center; justify-content:center; font-weight:700; }
 
-  @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .slide-up { animation: slideUp 0.3s ease; }
-  .with-nav { padding-bottom: 90px; }
-  .text-center { text-align: center; }
-  .mt-16 { margin-top: 16px; }
-  .mt-24 { margin-top: 24px; }
-  .gap-12 { display: flex; flex-direction: column; gap: 12px; }
+/* QR Scanner */
+.qr-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:200; display:none; flex-direction:column; align-items:center; justify-content:center; }
+.qr-overlay.show { display:flex; }
+.qr-box { width:250px; height:250px; border:3px solid #00ff88; border-radius:20px; position:relative; margin:24px 0; }
+.qr-box::before,.qr-box::after { content:''; position:absolute; width:30px; height:30px; border:4px solid white; }
+.qr-box::before { top:-2px; left:-2px; border-right:none; border-bottom:none; border-radius:8px 0 0 0; }
+.qr-box::after { bottom:-2px; right:-2px; border-left:none; border-top:none; border-radius:0 0 8px 0; }
+.qr-scan-line { position:absolute; width:100%; height:2px; background:linear-gradient(90deg,transparent,#00ff88,transparent); animation:scan 2s linear infinite; }
+
+/* Loader */
+.loader { display:inline-block; width:18px; height:18px; border:3px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.8s linear infinite; }
+
+/* Profile menu item */
+.menu-item { display:flex; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); gap:14px; cursor:pointer; }
+.menu-item:last-child { border-bottom:none; }
+.menu-icon { width:38px; height:38px; border-radius:10px; background:var(--light); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.menu-text { flex:1; font-size:14px; font-weight:600; color:var(--text); }
+.menu-arrow { color:var(--gray); }
+
+/* Toggle */
+.toggle-wrap { width:44px; height:24px; background:var(--border); border-radius:12px; position:relative; transition:all 0.3s; }
+.toggle-thumb { width:20px; height:20px; background:white; border-radius:50%; position:absolute; top:2px; left:2px; transition:all 0.3s; box-shadow:0 2px 4px rgba(0,0,0,0.2); }
+.toggle-wrap.on { background:#1a3c6e; }
+.toggle-wrap.on .toggle-thumb { left:22px; }
+
+/* Lang selector */
+.lang-btn { padding:10px 20px; border-radius:12px; border:2px solid var(--border); background:var(--card); color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.lang-btn.active { border-color:#1a3c6e; background:#1a3c6e; color:white; }
+
+/* Confirm card */
+.confirm-hero { background:linear-gradient(160deg,#1a3c6e,#0f2447); border-radius:24px; padding:32px; text-align:center; margin-bottom:16px; }
+.detail-card { background:var(--light); border-radius:16px; padding:20px; }
+.detail-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+.detail-row:last-child { border-bottom:none; }
+
+/* Success */
+#success { align-items:center; justify-content:center; padding:32px 24px; background:var(--card); }
+.success-icon { width:100px; height:100px; background:linear-gradient(135deg,#d1fae5,#a7f3d0); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:48px; box-shadow:0 0 0 16px #f0fdf4; margin-bottom:28px; }
+
+/* Notifications */
+.notif-item { background:var(--card); border-radius:16px; padding:16px; margin-bottom:10px; display:flex; gap:14px; align-items:flex-start; box-shadow:0 2px 8px rgba(0,0,0,0.05); border-left:4px solid var(--accent); }
+.notif-item.unread { border-left-color:var(--green); }
+
+@keyframes slideDown { from{top:-50px;opacity:0} to{top:20px;opacity:1} }
+@keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+@keyframes scan { from{top:0} to{top:100%} }
+.slide-up { animation:slideUp 0.3s ease; }
+.with-nav { padding-bottom:90px; }
+.mt-16{margin-top:16px} .mt-24{margin-top:24px} .tc{text-align:center} .gap-12{display:flex;flex-direction:column;gap:12px}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="toast" id="toast"></div>
+<div class="toast" id="toast"></div>
 
-  <!-- SPLASH -->
-  <div class="screen active" id="splash">
-    <div class="splash-logo">💸</div>
-    <div class="splash-title">SendMV</div>
-    <div class="splash-sub">Maldives → India Transfers</div>
-    <div class="splash-dots">
-      <div class="splash-dot active"></div>
-      <div class="splash-dot"></div>
-      <div class="splash-dot"></div>
-    </div>
+<!-- QR Scanner Overlay -->
+<div class="qr-overlay" id="qr-overlay">
+  <p style="color:white;font-size:18px;font-weight:700;">📷 Scan QR Code</p>
+  <p style="color:rgba(255,255,255,0.6);font-size:13px;margin-top:4px;" id="qr-mode-label">Point camera at QR code</p>
+  <div class="qr-box">
+    <div class="qr-scan-line"></div>
   </div>
-
-  <!-- WELCOME -->
-  <div class="screen" id="welcome">
-    <div class="hero">
-      <div class="hero-logo">💸 SendMV</div>
-      <div class="hero-title">Send money to India 🇮🇳 instantly</div>
-      <div class="hero-sub">From Maldives 🇲🇻 in minutes</div>
-      <div class="rate-pill">
-        <span>Live rate:</span>
-        <span class="rate-val" id="welcome-rate">1 MVR = 4.82 INR</span>
-      </div>
-    </div>
-    <div class="page-body">
-      <div style="margin-bottom:24px;">
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">⚡</div>
-          <div><div style="font-size:14px;font-weight:700;color:var(--navy);">Instant Transfers</div><div style="font-size:12px;color:var(--gray);">Arrives in ~30 minutes via UPI</div></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🔒</div>
-          <div><div style="font-size:14px;font-weight:700;color:var(--navy);">Bank-Level Security</div><div style="font-size:12px;color:var(--gray);">256-bit encryption & MMA licensed</div></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:14px;">
-          <div style="width:44px;height:44px;border-radius:12px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">💰</div>
-          <div><div style="font-size:14px;font-weight:700;color:var(--navy);">Best Exchange Rates</div><div style="font-size:12px;color:var(--gray);">Low fees, best MVR to INR rates</div></div>
-        </div>
-      </div>
-      <div class="gap-12">
-        <button class="btn btn-primary" onclick="go('signup')">Create Account</button>
-        <button class="btn btn-outline" onclick="go('login')">I have an account</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SIGNUP -->
-  <div class="screen" id="signup">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('welcome')">←</button>
-      <div class="page-title">Create Account</div>
-      <div class="page-sub">Join SendMV today</div>
-    </div>
-    <div class="page-body">
-      <div class="form-group">
-        <label class="form-label">Full Name</label>
-        <input type="text" class="form-input" id="su-name" placeholder="Ahmed Rasheed">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mobile Number</label>
-        <div class="phone-row">
-          <div class="phone-code">🇲🇻 +960</div>
-          <input type="tel" class="phone-input" id="su-phone" placeholder="7xx xxxx">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email Address</label>
-        <input type="email" class="form-input" id="su-email" placeholder="ahmed@example.com">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-input" id="su-pass" placeholder="Min 8 characters">
-      </div>
-      <button class="btn btn-primary mt-24" id="su-btn" onclick="doSignup()">Create Account →</button>
-      <div class="divider"><span>or</span></div>
-      <p class="text-center" style="color:var(--gray);font-size:14px;">Already have an account? <span class="link" onclick="go('login')">Login</span></p>
-    </div>
-  </div>
-
-  <!-- OTP -->
-  <div class="screen" id="otp">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('signup')">←</button>
-      <div class="page-title">Verify OTP</div>
-      <div class="page-sub" id="otp-sub">Enter the 6-digit code</div>
-    </div>
-    <div class="page-body text-center">
-      <p style="color:var(--gray);font-size:14px;margin-bottom:6px;">Code sent to</p>
-      <p style="color:var(--navy);font-weight:700;font-size:16px;" id="otp-num">+960 xxxxxxx</p>
-      <div class="otp-wrap">
-        <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,0)" onkeydown="otpKey(event,this,0)">
-        <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,1)" onkeydown="otpKey(event,this,1)">
-        <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,2)" onkeydown="otpKey(event,this,2)">
-        <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,3)" onkeydown="otpKey(event,this,3)">
-        <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,4)" onkeydown="otpKey(event,this,4)">
-        <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,5)" onkeydown="otpKey(event,this,5)">
-      </div>
-      <p style="color:var(--gray);font-size:13px;">Didn't get it? <span class="link" onclick="showToast('OTP resent! 📱')">Resend</span></p>
-      <p style="color:var(--gray);font-size:12px;margin-top:8px;">💡 Demo OTP: <strong>123456</strong></p>
-      <button class="btn btn-primary mt-24" onclick="verifyOTP()">Verify & Continue →</button>
-    </div>
-  </div>
-
-  <!-- LOGIN -->
-  <div class="screen" id="login">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('welcome')">←</button>
-      <div class="page-title">Welcome Back 👋</div>
-      <div class="page-sub">Login to your account</div>
-    </div>
-    <div class="page-body">
-      <div class="form-group">
-        <label class="form-label">Phone or Email</label>
-        <input type="text" class="form-input" id="li-id" placeholder="+960 7xx xxxx or email">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-input" id="li-pass" placeholder="Your password">
-      </div>
-      <p style="text-align:right;margin-bottom:20px;"><span class="link" style="font-size:13px;" onclick="showToast('Reset link sent to your email! 📧')">Forgot password?</span></p>
-      <button class="btn btn-primary" id="li-btn" onclick="doLogin()">Login →</button>
-      <div class="divider"><span>or</span></div>
-      <button class="btn btn-outline" onclick="go('signup')">Create New Account</button>
-    </div>
-  </div>
-
-  <!-- HOME -->
-  <div class="screen" id="home">
-    <div class="home-hero">
-      <div class="home-toprow">
-        <div>
-          <div class="greeting">Good morning 👋</div>
-          <div class="username" id="home-name">Loading...</div>
-        </div>
-        <div style="font-size:22px;">🔔</div>
-      </div>
-      <div class="rate-card">
-        <div class="rate-label">Today's Rate</div>
-        <div class="rate-value" id="home-rate">Loading...</div>
-        <div style="display:inline-flex;align-items:center;background:rgba(52,211,153,0.2);border-radius:8px;padding:4px 10px;margin-top:8px;">
-          <span style="color:#6ee7b7;font-size:12px;font-weight:600;">↑ Best rate guaranteed</span>
-        </div>
-      </div>
-    </div>
-    <div class="home-body with-nav">
-      <div class="quick-card">
-        <button class="quick-btn" onclick="go('send')"><span style="font-size:26px;">💸</span><span class="ql">Send</span></button>
-        <button class="quick-btn" onclick="go('history')"><span style="font-size:26px;">📋</span><span class="ql">History</span></button>
-        <button class="quick-btn" onclick="go('profile')"><span style="font-size:26px;">👤</span><span class="ql">Profile</span></button>
-      </div>
-      <button class="send-cta" onclick="go('send')">💸 &nbsp; Send Money to India</button>
-      <div class="section-title">Recent Transfers</div>
-      <div id="home-txns"><div style="text-align:center;color:var(--gray);padding:20px;">Loading...</div></div>
-    </div>
-  </div>
-
-  <!-- SEND -->
-  <div class="screen" id="send">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('home')">←</button>
-      <div class="page-title">Send Money</div>
-      <div class="page-sub">Maldives 🇲🇻 → India 🇮🇳</div>
-    </div>
-    <div class="page-body with-nav">
-      <div class="amount-box send-box">
-        <div class="amount-label">You send</div>
-        <div class="amount-row">
-          <div class="curr-badge curr-mvr">MVR 🇲🇻</div>
-          <input type="number" class="amount-input" id="mvr-in" placeholder="0" oninput="calcINR()">
-        </div>
-      </div>
-      <div style="text-align:center;font-size:22px;color:var(--accent);margin:4px 0;">⇅</div>
-      <div class="amount-box recv-box">
-        <div class="amount-label">Recipient gets</div>
-        <div class="amount-row">
-          <div class="curr-badge curr-inr">INR 🇮🇳</div>
-          <div class="amount-display" id="inr-out">0</div>
-        </div>
-      </div>
-      <div class="fee-table" id="fee-tbl" style="display:none;">
-        <div class="fee-row"><span class="fee-label">Rate</span><span class="fee-val" id="fee-rate">1 MVR = 4.82 INR</span></div>
-        <div class="fee-row"><span class="fee-label">Fee</span><span class="fee-val">MVR 10</span></div>
-        <div class="fee-row"><span class="fee-label">Total</span><span class="fee-val" id="fee-total">MVR 0</span></div>
-        <div class="fee-row"><span class="fee-label">Arrives</span><span class="fee-val">~30 minutes</span></div>
-      </div>
-      <button class="btn btn-primary mt-24" id="send-btn" onclick="goRecipient()" style="opacity:0.5;">Continue →</button>
-    </div>
-  </div>
-
-  <!-- RECIPIENT -->
-  <div class="screen" id="recipient">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('send')">←</button>
-      <div class="page-title">Recipient Details</div>
-      <div class="page-sub">Who are you sending to?</div>
-    </div>
-    <div class="page-body with-nav">
-      <div style="background:#f0f7ff;border-radius:16px;padding:16px;display:flex;justify-content:space-between;margin-bottom:24px;border:1.5px solid #dbeafe;">
-        <div><p style="color:var(--gray);font-size:12px;">Sending</p><p style="color:var(--navy);font-weight:800;font-size:18px;" id="rec-mvr">MVR 0</p></div>
-        <span style="color:var(--gray);font-size:20px;">→</span>
-        <div style="text-align:right;"><p style="color:var(--gray);font-size:12px;">Gets</p><p style="color:var(--navy);font-weight:800;font-size:18px;" id="rec-inr">₹0</p></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Recipient Name</label>
-        <input type="text" class="form-input" id="rec-name" placeholder="Full name">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Indian Phone (UPI)</label>
-        <div class="phone-row">
-          <div class="phone-code">🇮🇳 +91</div>
-          <input type="tel" class="phone-input" id="rec-phone" placeholder="98765 43210" maxlength="10">
-        </div>
-        <p style="color:var(--gray);font-size:12px;margin-top:6px;">💡 Money arrives via UPI to this number</p>
-      </div>
-      <button class="btn btn-primary mt-24" onclick="goConfirm()">Review Transfer →</button>
-    </div>
-  </div>
-
-  <!-- CONFIRM -->
-  <div class="screen" id="confirm">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('recipient')">←</button>
-      <div class="page-title">Confirm Transfer</div>
-      <div class="page-sub">Review before sending</div>
-    </div>
-    <div class="page-body with-nav">
-      <div class="confirm-card">
-        <p style="color:rgba(255,255,255,0.7);font-size:13px;">You're sending</p>
-        <p style="color:white;font-size:42px;font-weight:800;margin-top:4px;" id="conf-mvr">MVR 0</p>
-        <p style="color:rgba(255,255,255,0.4);font-size:24px;margin:8px 0;">↓</p>
-        <p style="color:rgba(255,255,255,0.7);font-size:13px;">Recipient gets</p>
-        <p style="color:#86efac;font-size:34px;font-weight:800;margin-top:4px;" id="conf-inr">₹0</p>
-      </div>
-      <div class="detail-card">
-        <div class="detail-row"><span style="color:var(--gray);font-size:14px;">👤 Recipient</span><span style="color:var(--navy);font-weight:600;font-size:14px;" id="conf-name">—</span></div>
-        <div class="detail-row"><span style="color:var(--gray);font-size:14px;">📱 Phone</span><span style="color:var(--navy);font-weight:600;font-size:14px;" id="conf-phone">—</span></div>
-        <div class="detail-row"><span style="color:var(--gray);font-size:14px;">💱 Rate</span><span style="color:var(--navy);font-weight:600;font-size:14px;" id="conf-rate">—</span></div>
-        <div class="detail-row"><span style="color:var(--gray);font-size:14px;">🏷️ Fee</span><span style="color:var(--navy);font-weight:600;font-size:14px;">MVR 10</span></div>
-        <div class="detail-row"><span style="color:var(--gray);font-size:14px;">⚡ Arrival</span><span style="color:var(--navy);font-weight:600;font-size:14px;">~30 minutes</span></div>
-      </div>
-      <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:12px;margin:16px 0;">
-        <p style="color:#92400e;font-size:13px;">🔒 Secured & encrypted. Powered by Nium.</p>
-      </div>
-      <button class="btn btn-green" id="conf-btn" onclick="doTransfer()">✅ &nbsp; Confirm & Send</button>
-    </div>
-  </div>
-
-  <!-- SUCCESS -->
-  <div class="screen" id="success">
-    <div class="success-icon">✅</div>
-    <p style="font-size:26px;font-weight:800;color:var(--navy);">Transfer Sent!</p>
-    <p style="color:var(--gray);font-size:15px;margin-top:8px;text-align:center;" id="suc-sub">Money is on its way!</p>
-    <div class="success-card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
-        <div><p style="color:var(--gray);font-size:12px;">You sent</p><p style="font-weight:800;font-size:22px;color:var(--navy);" id="suc-mvr">MVR 0</p></div>
-        <span style="font-size:24px;color:var(--gray);">→</span>
-        <div style="text-align:right;"><p style="color:var(--gray);font-size:12px;">They get</p><p style="font-weight:800;font-size:22px;color:var(--green);" id="suc-inr">₹0</p></div>
-      </div>
-      <div style="background:#f0fdf4;border-radius:10px;padding:10px;text-align:center;">
-        <p style="color:var(--green);font-size:13px;font-weight:600;">⚡ Expected: ~30 minutes</p>
-      </div>
-    </div>
-    <p style="color:var(--gray);font-size:13px;margin-bottom:24px;" id="suc-ref">Ref: #TXN000000</p>
-    <button class="btn btn-primary" style="width:100%;" onclick="go('home')">Back to Home</button>
-    <button class="btn btn-outline mt-16" style="width:100%;" onclick="downloadReceipt()">📄 &nbsp; Download Receipt</button>
-  </div>
-
-  <!-- HISTORY -->
-  <div class="screen" id="history">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('home')">←</button>
-      <div class="page-title">Transfer History</div>
-      <div class="page-sub">All your past transfers</div>
-    </div>
-    <div class="page-body with-nav" id="history-list" style="background:var(--light);">
-      <div style="text-align:center;color:var(--gray);padding:40px;">Loading...</div>
-    </div>
-  </div>
-
-  <!-- BANK ACCOUNT -->
-  <div class="screen" id="bank">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('profile')">←</button>
-      <div class="page-title">Bank Accounts</div>
-      <div class="page-sub">Your linked accounts</div>
-    </div>
-    <div class="page-body with-nav">
-      <!-- Maldives Bank -->
-      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">MALDIVES BANK (MVR)</p>
-      <div style="background:var(--light);border-radius:16px;padding:20px;margin-bottom:20px;border:1.5px solid var(--border);">
-        <div class="form-group">
-          <label class="form-label">Bank Name</label>
-          <select class="form-input" id="bml-bank">
-            <option>Bank of Maldives (BML)</option>
-            <option>Maldives Islamic Bank (MIB)</option>
-            <option>STO</option>
-            <option>Allied Insurance</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Account Number</label>
-          <input type="tel" class="form-input" id="bml-acc" placeholder="7770000123456">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Account Holder Name</label>
-          <input type="text" class="form-input" id="bml-name" placeholder="Full name as in bank">
-        </div>
-        <button class="btn btn-primary" onclick="saveBMLBank()" style="margin-top:8px;">Save Maldives Bank ✅</button>
-      </div>
-
-      <!-- India Bank -->
-      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">INDIA RECIPIENT ACCOUNT (INR)</p>
-      <div style="background:var(--light);border-radius:16px;padding:20px;margin-bottom:20px;border:1.5px solid var(--border);">
-
-        <!-- Transfer type selector -->
-        <div style="display:flex;gap:10px;margin-bottom:20px;">
-          <button id="upi-tab" onclick="switchIndiaTab('upi')" style="flex:1;padding:12px;border-radius:12px;border:2px solid #1a3c6e;background:#1a3c6e;color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">
-            📱 UPI
-          </button>
-          <button id="bank-tab" onclick="switchIndiaTab('bank')" style="flex:1;padding:12px;border-radius:12px;border:2px solid var(--border);background:white;color:var(--navy);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">
-            🏦 Bank Transfer
-          </button>
-        </div>
-
-        <!-- UPI Section -->
-        <div id="upi-section">
-          <div class="form-group">
-            <label class="form-label">UPI Phone Number</label>
-            <div class="phone-row">
-              <div class="phone-code">🇮🇳 +91</div>
-              <input type="tel" class="phone-input" id="india-phone" placeholder="98765 43210" maxlength="10">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Account Holder Name</label>
-            <input type="text" class="form-input" id="india-upi-name" placeholder="Recipient full name">
-          </div>
-          <p style="color:var(--gray);font-size:12px;margin-bottom:16px;">💡 Money arrives instantly to any UPI linked phone</p>
-          <button class="btn btn-primary" onclick="saveIndiaUPI()">Save UPI Account ✅</button>
-        </div>
-
-        <!-- Bank Transfer Section -->
-        <div id="bank-section" style="display:none;">
-          <div class="form-group">
-            <label class="form-label">Account Holder Name</label>
-            <input type="text" class="form-input" id="india-acc-name" placeholder="Full name as in bank">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bank Name</label>
-            <select class="form-input" id="india-bank-name">
-              <option>State Bank of India (SBI)</option>
-              <option>HDFC Bank</option>
-              <option>ICICI Bank</option>
-              <option>Axis Bank</option>
-              <option>Punjab National Bank</option>
-              <option>Bank of Baroda</option>
-              <option>Canara Bank</option>
-              <option>Kotak Mahindra Bank</option>
-              <option>IndusInd Bank</option>
-              <option>Yes Bank</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Account Number</label>
-            <input type="tel" class="form-input" id="india-acc-num" placeholder="1234567890123456">
-          </div>
-          <div class="form-group">
-            <label class="form-label">IFSC Code</label>
-            <input type="text" class="form-input" id="india-ifsc" placeholder="SBIN0001234" style="text-transform:uppercase;">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Account Type</label>
-            <select class="form-input" id="india-acc-type">
-              <option>Savings Account</option>
-              <option>Current Account</option>
-            </select>
-          </div>
-          <p style="color:var(--gray);font-size:12px;margin-bottom:16px;">💡 Money arrives via IMPS/NEFT in 30 minutes</p>
-          <button class="btn btn-primary" onclick="saveIndiaBankTransfer()">Save Bank Account ✅</button>
-        </div>
-      </div>
-
-      <!-- Saved accounts -->
-      <p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:0.05em;">SAVED ACCOUNTS</p>
-      <div id="saved-banks">
-        <div style="text-align:center;color:var(--gray);padding:20px;">No accounts saved yet</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PROFILE -->
-  <div class="screen" id="profile">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('home')">←</button>
-      <div class="page-title">My Profile</div>
-      <div class="page-sub">Manage your account</div>
-    </div>
-    <div class="page-body with-nav">
-      <div style="text-align:center;margin-bottom:28px;">
-        <div style="width:80px;height:80px;background:linear-gradient(135deg,#1a3c6e,#2563eb);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;">👤</div>
-        <div style="font-size:20px;font-weight:800;color:var(--navy);" id="prof-name">Loading...</div>
-        <div style="color:var(--gray);font-size:14px;margin-top:4px;" id="prof-email">Loading...</div>
-        <div style="display:inline-flex;align-items:center;background:#f0fdf4;border-radius:20px;padding:6px 14px;margin-top:10px;">
-          <span style="color:var(--green);font-size:12px;font-weight:700;">✓ Verified Account</span>
-        </div>
-      </div>
-      <div style="background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
-        <div onclick="go('bank')" style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;cursor:pointer;">
-          <div style="width:38px;height:38px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;">🏦</div>
-          <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);">Bank Accounts</div>
-          <span style="color:var(--gray);">›</span>
-        </div>
-        <div onclick="go('referral')" style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;cursor:pointer;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;font-size:18px;">🎁</div>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:600;color:var(--navy);">Refer & Earn</div>
-            <div style="font-size:12px;color:var(--green);">Earn MVR 20 per referral!</div>
-          </div>
-          <span style="color:var(--gray);">›</span>
-        </div>
-        <div onclick="toggleDark()" style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;cursor:pointer;">
-          <div style="width:38px;height:38px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;" id="dark-icon">🌙</div>
-          <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);" id="dark-label">Dark Mode</div>
-          <div style="width:44px;height:24px;background:var(--border);border-radius:12px;position:relative;transition:all 0.3s;" id="dark-toggle">
-            <div style="width:20px;height:20px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:all 0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.2);" id="dark-thumb"></div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;">🔒</div>
-          <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);">Security</div>
-          <span style="color:var(--gray);">›</span>
-        </div>
-        <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;">
-          <div style="width:38px;height:38px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;">💬</div>
-          <div style="flex:1;font-size:14px;font-weight:600;color:var(--navy);">Support</div>
-          <span style="color:var(--gray);">›</span>
-        </div>
-        <div onclick="doLogout()" style="display:flex;align-items:center;padding:16px 20px;gap:14px;cursor:pointer;">
-          <div style="width:38px;height:38px;border-radius:10px;background:#fef2f2;display:flex;align-items:center;justify-content:center;font-size:18px;">🚪</div>
-          <div style="flex:1;font-size:14px;font-weight:600;color:#ef4444;">Logout</div>
-          <span style="color:#ef4444;">›</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- REFERRAL -->
-  <div class="screen" id="referral">
-    <div class="page-header">
-      <button class="back-btn" onclick="go('profile')">←</button>
-      <div class="page-title">Refer & Earn 🎁</div>
-      <div class="page-sub">Invite friends and earn MVR 20!</div>
-    </div>
-    <div class="page-body with-nav">
-      <!-- Earnings summary -->
-      <div style="background:linear-gradient(135deg,#059669,#047857);border-radius:20px;padding:24px;text-align:center;margin-bottom:24px;">
-        <div style="color:rgba(255,255,255,0.8);font-size:13px;">Total Earnings</div>
-        <div style="color:white;font-size:40px;font-weight:800;margin-top:4px;" id="ref-earnings">MVR 0</div>
-        <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-top:4px;" id="ref-count">0 friends referred</div>
-      </div>
-
-      <!-- Referral code -->
-      <div style="background:var(--light);border-radius:16px;padding:20px;margin-bottom:20px;border:1.5px dashed var(--border);">
-        <div style="text-align:center;">
-          <div style="font-size:13px;color:var(--gray);margin-bottom:8px;">Your Referral Code</div>
-          <div style="font-size:32px;font-weight:800;color:var(--navy);letter-spacing:4px;" id="ref-code">SENDMV00</div>
-          <button onclick="copyRefCode()" style="margin-top:12px;padding:10px 24px;background:var(--navy);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
-            📋 Copy Code
-          </button>
-        </div>
-      </div>
-
-      <!-- How it works -->
-      <div style="margin-bottom:20px;">
-        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">How it works</div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <div style="display:flex;gap:14px;align-items:flex-start;">
-            <div style="width:32px;height:32px;background:#1a3c6e;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">1</div>
-            <div><div style="font-weight:600;color:var(--navy);font-size:14px;">Share your code</div><div style="color:var(--gray);font-size:12px;">Share with friends & family in Maldives</div></div>
-          </div>
-          <div style="display:flex;gap:14px;align-items:flex-start;">
-            <div style="width:32px;height:32px;background:#1a3c6e;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">2</div>
-            <div><div style="font-weight:600;color:var(--navy);font-size:14px;">Friend signs up</div><div style="color:var(--gray);font-size:12px;">They use your code when creating account</div></div>
-          </div>
-          <div style="display:flex;gap:14px;align-items:flex-start;">
-            <div style="width:32px;height:32px;background:#059669;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">3</div>
-            <div><div style="font-weight:600;color:var(--navy);font-size:14px;">You earn MVR 20!</div><div style="color:var(--gray);font-size:12px;">Added to your wallet after first transfer</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Share buttons -->
-      <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;">Share via</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <button onclick="shareWhatsApp()" style="padding:14px;background:#25D366;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
-          💬 WhatsApp
-        </button>
-        <button onclick="shareTelegram()" style="padding:14px;background:#0088cc;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
-          ✈️ Telegram
-        </button>
-        <button onclick="shareSMS()" style="padding:14px;background:var(--navy);color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
-          📱 SMS
-        </button>
-        <button onclick="shareLink()" style="padding:14px;background:var(--light);color:var(--navy);border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
-          🔗 Copy Link
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM NAV -->
-  <div class="bottom-nav" id="bottom-nav" style="display:none;">
-    <button class="nav-item active" id="nav-home" onclick="navTo('home')">
-      <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
-    </button>
-    <button class="nav-item" id="nav-send" onclick="navTo('send')">
-      <span class="nav-icon">💸</span><span class="nav-label">Send</span>
-    </button>
-    <button class="nav-item" id="nav-history" onclick="navTo('history')">
-      <span class="nav-icon">📋</span><span class="nav-label">History</span>
-    </button>
-    <button class="nav-item" id="nav-profile" onclick="navTo('profile')">
-      <span class="nav-icon">👤</span><span class="nav-label">Profile</span>
-    </button>
+  <p style="color:rgba(255,255,255,0.6);font-size:13px;text-align:center;padding:0 32px;">Supports UPI QR, Bank QR, International SWIFT QR</p>
+  <div style="display:flex;gap:12px;margin-top:20px;">
+    <button onclick="closeQR()" style="padding:14px 28px;background:rgba(255,255,255,0.15);color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Cancel</button>
+    <button onclick="simulateQRScan()" style="padding:14px 28px;background:#059669;color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Demo Scan</button>
   </div>
 </div>
 
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+  <div class="splash-logo">💸</div>
+  <div class="splash-title">SendMV</div>
+  <div class="splash-sub" id="splash-sub">Maldives → India Transfers</div>
+  <div class="splash-dots">
+    <div class="splash-dot active"></div>
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+  </div>
+</div>
+
+<!-- WELCOME -->
+<div class="screen" id="welcome">
+  <div class="hero">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div class="hero-logo">💸 SendMV</div>
+      <div style="display:flex;gap:8px;">
+        <button class="lang-btn active" id="lang-en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="lang-dv" onclick="setLang('dv')">ދިވެހި</button>
+      </div>
+    </div>
+    <div class="hero-title" id="w-title">Send money to India 🇮🇳 instantly</div>
+    <div class="hero-sub" id="w-sub">From Maldives 🇲🇻 in minutes</div>
+    <div class="rate-pill"><span id="w-rate-label">Live rate:</span><span class="rate-val" id="welcome-rate">1 MVR = 4.82 INR</span></div>
+  </div>
+  <div class="page-body" style="background:var(--card);">
+    <div style="margin-bottom:24px;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;"><div style="width:44px;height:44px;border-radius:12px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;">⚡</div><div><div style="font-size:14px;font-weight:700;color:var(--text);" id="f1">Instant Transfers</div><div style="font-size:12px;color:var(--gray);" id="f1s">Arrives in ~30 minutes via UPI</div></div></div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;"><div style="width:44px;height:44px;border-radius:12px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;">🔒</div><div><div style="font-size:14px;font-weight:700;color:var(--text);" id="f2">Bank-Level Security</div><div style="font-size:12px;color:var(--gray);" id="f2s">256-bit encryption & MMA licensed</div></div></div>
+      <div style="display:flex;align-items:center;gap:14px;"><div style="width:44px;height:44px;border-radius:12px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;">💰</div><div><div style="font-size:14px;font-weight:700;color:var(--text);" id="f3">Best Exchange Rates</div><div style="font-size:12px;color:var(--gray);" id="f3s">Low fees, best MVR to INR rates</div></div></div>
+    </div>
+    <div class="gap-12">
+      <button class="btn btn-primary" onclick="go('signup')" id="btn-create">Create Account</button>
+      <button class="btn btn-outline" onclick="go('login')" id="btn-login">I have an account</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP -->
+<div class="screen" id="signup">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('welcome')">←</button>
+    <div class="page-title" id="su-title">Create Account</div>
+    <div class="page-sub" id="su-sub">Join SendMV today</div>
+  </div>
+  <div class="page-body">
+    <div class="form-group"><label class="form-label" id="l-name">Full Name</label><input type="text" class="form-input" id="su-name" placeholder="Ahmed Rasheed"></div>
+    <div class="form-group"><label class="form-label" id="l-phone">Mobile Number</label><div class="phone-row"><div class="phone-code">🇲🇻 +960</div><input type="tel" class="phone-input" id="su-phone" placeholder="7xx xxxx"></div></div>
+    <div class="form-group"><label class="form-label" id="l-email">Email Address</label><input type="email" class="form-input" id="su-email" placeholder="ahmed@example.com"></div>
+    <div class="form-group"><label class="form-label" id="l-pass">Password</label><input type="password" class="form-input" id="su-pass" placeholder="Min 8 characters"></div>
+    <div class="form-group"><label class="form-label">Referral Code (Optional)</label><input type="text" class="form-input" id="su-ref" placeholder="Enter referral code"></div>
+    <button class="btn btn-primary mt-24" id="su-btn" onclick="doSignup()">Create Account →</button>
+    <div class="divider"><span>or</span></div>
+    <p class="tc" style="color:var(--gray);font-size:14px;" id="su-login-link">Already have an account? <span class="link" onclick="go('login')">Login</span></p>
+  </div>
+</div>
+
+<!-- OTP -->
+<div class="screen" id="otp">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('signup')">←</button>
+    <div class="page-title">Verify OTP</div>
+    <div class="page-sub">Enter 6-digit code</div>
+  </div>
+  <div class="page-body tc">
+    <p style="color:var(--gray);font-size:14px;margin-bottom:6px;">Code sent to</p>
+    <p style="color:var(--text);font-weight:700;font-size:16px;" id="otp-num">+960 xxxxxxx</p>
+    <div class="otp-wrap">
+      <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,0)" onkeydown="otpKey(event,this,0)">
+      <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,1)" onkeydown="otpKey(event,this,1)">
+      <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,2)" onkeydown="otpKey(event,this,2)">
+      <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,3)" onkeydown="otpKey(event,this,3)">
+      <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,4)" onkeydown="otpKey(event,this,4)">
+      <input type="tel" maxlength="1" class="otp-box" oninput="otpIn(this,5)" onkeydown="otpKey(event,this,5)">
+    </div>
+    <p style="color:var(--gray);font-size:13px;">Didn't get it? <span class="link" onclick="showToast('OTP resent! 📱')">Resend</span></p>
+    <p style="color:var(--gray);font-size:12px;margin-top:8px;">💡 Demo OTP: <strong>123456</strong></p>
+    <button class="btn btn-primary mt-24" onclick="verifyOTP()">Verify & Continue →</button>
+  </div>
+</div>
+
+<!-- SET PIN -->
+<div class="screen" id="setpin">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('otp')">←</button>
+    <div class="page-title">Set Transaction PIN</div>
+    <div class="page-sub">4-digit PIN for secure transfers</div>
+  </div>
+  <div class="page-body tc">
+    <p style="color:var(--gray);font-size:14px;margin-bottom:4px;">Create a 4-digit PIN</p>
+    <p style="color:var(--text);font-size:13px;margin-bottom:20px;">Required for every transfer 🔐</p>
+    <div class="pin-wrap" id="pin-dots-set">
+      <div class="pin-dot" id="pd0">​</div>
+      <div class="pin-dot" id="pd1">​</div>
+      <div class="pin-dot" id="pd2">​</div>
+      <div class="pin-dot" id="pd3">​</div>
+    </div>
+    <div class="numpad">
+      <button class="num-key" onclick="pinInput('1','set')">1</button>
+      <button class="num-key" onclick="pinInput('2','set')">2</button>
+      <button class="num-key" onclick="pinInput('3','set')">3</button>
+      <button class="num-key" onclick="pinInput('4','set')">4</button>
+      <button class="num-key" onclick="pinInput('5','set')">5</button>
+      <button class="num-key" onclick="pinInput('6','set')">6</button>
+      <button class="num-key" onclick="pinInput('7','set')">7</button>
+      <button class="num-key" onclick="pinInput('8','set')">8</button>
+      <button class="num-key" onclick="pinInput('9','set')">9</button>
+      <button class="num-key empty"></button>
+      <button class="num-key" onclick="pinInput('0','set')">0</button>
+      <button class="num-key" onclick="pinDelete('set')">⌫</button>
+    </div>
+    <p style="color:var(--gray);font-size:12px;margin-top:16px;">You'll use this PIN to confirm every transfer</p>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="login">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('welcome')">←</button>
+    <div class="page-title" id="li-title">Welcome Back 👋</div>
+    <div class="page-sub" id="li-sub">Login to your account</div>
+  </div>
+  <div class="page-body">
+    <div class="form-group"><label class="form-label" id="l-id">Phone or Email</label><input type="text" class="form-input" id="li-id" placeholder="+960 7xx xxxx or email"></div>
+    <div class="form-group"><label class="form-label" id="l-passw">Password</label><input type="password" class="form-input" id="li-pass" placeholder="Your password"></div>
+    <p style="text-align:right;margin-bottom:20px;"><span class="link" style="font-size:13px;" onclick="showToast('Reset link sent! 📧')">Forgot password?</span></p>
+    <button class="btn btn-primary" id="li-btn" onclick="doLogin()">Login →</button>
+    <div class="divider"><span>or</span></div>
+    <button class="btn btn-outline" onclick="go('signup')" id="btn-new-acc">Create New Account</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+  <div class="home-hero">
+    <div class="home-toprow">
+      <div>
+        <div style="color:rgba(255,255,255,0.7);font-size:13px;" id="h-greeting">Good morning 👋</div>
+        <div style="color:white;font-size:20px;font-weight:700;" id="home-name">Loading...</div>
+      </div>
+      <div style="position:relative;cursor:pointer;" onclick="go('notifications')">
+        <div style="width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid rgba(255,255,255,0.2);">🔔</div>
+        <div class="notif-badge" id="notif-count" style="display:none;">0</div>
+      </div>
+    </div>
+    <div class="rate-card">
+      <div style="color:rgba(255,255,255,0.65);font-size:12px;" id="h-rate-label">Today's Rate</div>
+      <div style="color:white;font-size:26px;font-weight:800;margin-top:4px;" id="home-rate">Loading...</div>
+      <div style="display:inline-flex;align-items:center;background:rgba(52,211,153,0.2);border-radius:8px;padding:4px 10px;margin-top:8px;">
+        <span style="color:#6ee7b7;font-size:12px;font-weight:600;" id="h-rate-tag">↑ Best rate guaranteed</span>
+      </div>
+    </div>
+  </div>
+  <div class="home-body with-nav">
+    <div class="quick-card">
+      <button class="quick-btn" onclick="go('send')"><span style="font-size:24px;">💸</span><span class="ql" id="q-send">Send</span></button>
+      <button class="quick-btn" onclick="go('qrscan')"><span style="font-size:24px;">📷</span><span class="ql" id="q-scan">Scan QR</span></button>
+      <button class="quick-btn" onclick="go('history')"><span style="font-size:24px;">📋</span><span class="ql" id="q-hist">History</span></button>
+      <button class="quick-btn" onclick="go('profile')"><span style="font-size:24px;">👤</span><span class="ql" id="q-prof">Profile</span></button>
+    </div>
+    <button class="send-cta" onclick="go('send')" id="h-send-btn">💸 &nbsp; Send Money to India</button>
+    <div class="section-title" id="h-recent">Recent Transfers</div>
+    <div id="home-txns"><div style="text-align:center;color:var(--gray);padding:20px;">Loading...</div></div>
+  </div>
+</div>
+
+<!-- SEND -->
+<div class="screen" id="send">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('home')">←</button>
+    <div class="page-title" id="s-title">Send Money</div>
+    <div class="page-sub">Maldives 🇲🇻 → India 🇮🇳</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <!-- Transfer type -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button id="tab-upi" onclick="setTransferType('upi')" style="flex:1;padding:11px;border-radius:12px;border:2px solid #1a3c6e;background:#1a3c6e;color:white;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">📱 UPI</button>
+      <button id="tab-bank" onclick="setTransferType('bank')" style="flex:1;padding:11px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">🏦 Bank Transfer</button>
+      <button id="tab-qr" onclick="openQR('send')" style="flex:1;padding:11px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">📷 QR</button>
+    </div>
+    <div class="amount-box send-box">
+      <div style="color:var(--gray);font-size:13px;margin-bottom:10px;" id="s-you-send">You send</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="curr-badge curr-mvr">MVR 🇲🇻</div>
+        <input type="number" class="amount-input" id="mvr-in" placeholder="0" oninput="calcINR()">
+      </div>
+    </div>
+    <div style="text-align:center;font-size:22px;color:var(--accent);margin:4px 0;">⇅</div>
+    <div class="amount-box recv-box">
+      <div style="color:var(--gray);font-size:13px;margin-bottom:10px;" id="s-they-get">Recipient gets</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="curr-badge curr-inr">INR 🇮🇳</div>
+        <div style="flex:1;font-size:32px;font-weight:800;color:var(--text);text-align:right;" id="inr-out">0</div>
+      </div>
+    </div>
+    <div id="fee-tbl" style="display:none;background:var(--light);border-radius:14px;padding:14px 16px;margin-top:12px;">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span style="color:var(--gray);font-size:13px;" id="s-rate-label">Rate</span><span style="color:var(--text);font-size:13px;font-weight:600;" id="fee-rate">1 MVR = 4.82 INR</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span style="color:var(--gray);font-size:13px;" id="s-fee-label">Fee</span><span style="color:var(--text);font-size:13px;font-weight:600;">MVR 10</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span style="color:var(--gray);font-size:13px;" id="s-total-label">Total</span><span style="color:var(--text);font-size:13px;font-weight:600;" id="fee-total">MVR 0</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;"><span style="color:var(--gray);font-size:13px;" id="s-arrives">Arrives</span><span style="color:var(--text);font-size:13px;font-weight:600;">~30 minutes</span></div>
+    </div>
+    <button class="btn btn-primary mt-24" id="send-btn" onclick="goRecipient()" style="opacity:0.5;" id="s-continue">Continue →</button>
+  </div>
+</div>
+
+<!-- RECIPIENT -->
+<div class="screen" id="recipient">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('send')">←</button>
+    <div class="page-title" id="r-title">Recipient Details</div>
+    <div class="page-sub" id="r-sub">Who are you sending to?</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <div style="background:#f0f7ff;border-radius:16px;padding:16px;display:flex;justify-content:space-between;margin-bottom:20px;border:1.5px solid #dbeafe;">
+      <div><p style="color:var(--gray);font-size:12px;" id="r-sending">Sending</p><p style="color:var(--text);font-weight:800;font-size:18px;" id="rec-mvr">MVR 0</p></div>
+      <span style="color:var(--gray);font-size:20px;">→</span>
+      <div style="text-align:right;"><p style="color:var(--gray);font-size:12px;" id="r-gets">Gets</p><p style="color:var(--text);font-weight:800;font-size:18px;" id="rec-inr">₹0</p></div>
+    </div>
+
+    <!-- UPI section -->
+    <div id="rec-upi-section">
+      <div class="form-group"><label class="form-label" id="r-name-label">Recipient Name</label><input type="text" class="form-input" id="rec-name" placeholder="Full name"></div>
+      <div class="form-group">
+        <label class="form-label" id="r-phone-label">Indian Phone Number (UPI)</label>
+        <div class="phone-row"><div class="phone-code">🇮🇳 +91</div><input type="tel" class="phone-input" id="rec-phone" placeholder="98765 43210" maxlength="10"></div>
+        <p style="color:var(--gray);font-size:12px;margin-top:6px;">💡 Money arrives via UPI instantly</p>
+      </div>
+    </div>
+
+    <!-- Bank Transfer section -->
+    <div id="rec-bank-section" style="display:none;">
+      <div class="form-group"><label class="form-label">Account Holder Name</label><input type="text" class="form-input" id="rec-bank-name" placeholder="Full name as in bank"></div>
+      <div class="form-group">
+        <label class="form-label">Indian Bank</label>
+        <select class="form-input" id="rec-bank-select">
+          <option>State Bank of India (SBI)</option>
+          <option>HDFC Bank</option>
+          <option>ICICI Bank</option>
+          <option>Axis Bank</option>
+          <option>Punjab National Bank</option>
+          <option>Bank of Baroda</option>
+          <option>Canara Bank</option>
+          <option>Kotak Mahindra Bank</option>
+          <option>Union Bank of India</option>
+          <option>Indian Bank</option>
+          <option>IndusInd Bank</option>
+          <option>Yes Bank</option>
+          <option>Federal Bank</option>
+          <option>South Indian Bank</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Account Number</label><input type="tel" class="form-input" id="rec-acc-num" placeholder="1234567890123456"></div>
+      <div class="form-group"><label class="form-label">IFSC Code</label><input type="text" class="form-input" id="rec-ifsc" placeholder="SBIN0001234" style="text-transform:uppercase;"></div>
+      <div class="form-group">
+        <label class="form-label">Account Type</label>
+        <select class="form-input" id="rec-acc-type">
+          <option>Savings Account</option>
+          <option>Current Account</option>
+        </select>
+      </div>
+      <p style="color:var(--gray);font-size:12px;margin-bottom:16px;">💡 Money arrives via IMPS/NEFT in 30 minutes</p>
+    </div>
+
+    <!-- Saved recipients -->
+    <div id="saved-recipients" style="margin-top:8px;"></div>
+    <button class="btn btn-primary mt-24" onclick="goConfirm()" id="r-continue">Review Transfer →</button>
+  </div>
+</div>
+
+<!-- CONFIRM (with PIN) -->
+<div class="screen" id="confirm">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('recipient')">←</button>
+    <div class="page-title" id="c-title">Confirm Transfer</div>
+    <div class="page-sub" id="c-sub">Review before sending</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <div class="confirm-hero">
+      <p style="color:rgba(255,255,255,0.7);font-size:13px;" id="c-sending">You're sending</p>
+      <p style="color:white;font-size:42px;font-weight:800;margin-top:4px;" id="conf-mvr">MVR 0</p>
+      <p style="color:rgba(255,255,255,0.4);font-size:24px;margin:8px 0;">↓</p>
+      <p style="color:rgba(255,255,255,0.7);font-size:13px;" id="c-gets">Recipient gets</p>
+      <p style="color:#86efac;font-size:34px;font-weight:800;margin-top:4px;" id="conf-inr">₹0</p>
+    </div>
+    <div class="detail-card">
+      <div class="detail-row"><span style="color:var(--gray);font-size:14px;">👤 Recipient</span><span style="color:var(--text);font-weight:600;font-size:14px;" id="conf-name">—</span></div>
+      <div class="detail-row" id="conf-method-row"><span style="color:var(--gray);font-size:14px;">📱 Method</span><span style="color:var(--text);font-weight:600;font-size:14px;" id="conf-method">—</span></div>
+      <div class="detail-row"><span style="color:var(--gray);font-size:14px;">💱 Rate</span><span style="color:var(--text);font-weight:600;font-size:14px;" id="conf-rate">—</span></div>
+      <div class="detail-row"><span style="color:var(--gray);font-size:14px;">🏷️ Fee</span><span style="color:var(--text);font-weight:600;font-size:14px;">MVR 10</span></div>
+      <div class="detail-row"><span style="color:var(--gray);font-size:14px;">⚡ Arrival</span><span style="color:var(--text);font-weight:600;font-size:14px;">~30 minutes</span></div>
+    </div>
+    <!-- PIN Entry -->
+    <div style="background:var(--light);border-radius:16px;padding:20px;margin-top:16px;text-align:center;">
+      <p style="color:var(--text);font-weight:700;font-size:15px;margin-bottom:4px;" id="c-pin-label">🔐 Enter Transaction PIN</p>
+      <p style="color:var(--gray);font-size:13px;margin-bottom:16px;" id="c-pin-sub">Enter your 4-digit PIN to confirm</p>
+      <div class="pin-wrap" id="pin-dots-confirm">
+        <div class="pin-dot" id="cp0">​</div>
+        <div class="pin-dot" id="cp1">​</div>
+        <div class="pin-dot" id="cp2">​</div>
+        <div class="pin-dot" id="cp3">​</div>
+      </div>
+      <div class="numpad">
+        <button class="num-key" onclick="pinInput('1','confirm')">1</button>
+        <button class="num-key" onclick="pinInput('2','confirm')">2</button>
+        <button class="num-key" onclick="pinInput('3','confirm')">3</button>
+        <button class="num-key" onclick="pinInput('4','confirm')">4</button>
+        <button class="num-key" onclick="pinInput('5','confirm')">5</button>
+        <button class="num-key" onclick="pinInput('6','confirm')">6</button>
+        <button class="num-key" onclick="pinInput('7','confirm')">7</button>
+        <button class="num-key" onclick="pinInput('8','confirm')">8</button>
+        <button class="num-key" onclick="pinInput('9','confirm')">9</button>
+        <button class="num-key empty"></button>
+        <button class="num-key" onclick="pinInput('0','confirm')">0</button>
+        <button class="num-key" onclick="pinDelete('confirm')">⌫</button>
+      </div>
+    </div>
+    <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:12px;margin-top:16px;">
+      <p style="color:#92400e;font-size:13px;">🔒 Secured & encrypted. Powered by Nium.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="screen" id="success">
+  <div class="success-icon">✅</div>
+  <p style="font-size:26px;font-weight:800;color:var(--text);" id="suc-title">Transfer Sent!</p>
+  <p style="color:var(--gray);font-size:15px;margin-top:8px;text-align:center;" id="suc-sub">Money is on its way!</p>
+  <div style="background:var(--light);border-radius:20px;padding:24px;width:100%;border:1.5px solid var(--border);margin:24px 0;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+      <div><p style="color:var(--gray);font-size:12px;" id="suc-sent">You sent</p><p style="font-weight:800;font-size:22px;color:var(--text);" id="suc-mvr">MVR 0</p></div>
+      <span style="font-size:24px;color:var(--gray);">→</span>
+      <div style="text-align:right;"><p style="color:var(--gray);font-size:12px;" id="suc-received">They get</p><p style="font-weight:800;font-size:22px;color:var(--green);" id="suc-inr">₹0</p></div>
+    </div>
+    <div style="background:#f0fdf4;border-radius:10px;padding:10px;text-align:center;">
+      <p style="color:var(--green);font-size:13px;font-weight:600;">⚡ Expected: ~30 minutes</p>
+    </div>
+  </div>
+  <p style="color:var(--gray);font-size:13px;margin-bottom:24px;" id="suc-ref">Ref: #TXN000000</p>
+  <button class="btn btn-primary" style="width:100%;" onclick="go('home')" id="suc-home">Back to Home</button>
+  <button class="btn btn-outline mt-16" style="width:100%;" onclick="downloadReceipt()" id="suc-receipt">📄 Download Receipt</button>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="history">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('home')">←</button>
+    <div class="page-title" id="hi-title">Transfer History</div>
+    <div class="page-sub" id="hi-sub">All your past transfers</div>
+  </div>
+  <div style="padding:20px;flex:1;overflow-y:auto;background:var(--bg);" id="history-list" class="with-nav">
+    <div style="text-align:center;color:var(--gray);padding:40px;">Loading...</div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="screen" id="notifications">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('home')">←</button>
+    <div class="page-title">Notifications 🔔</div>
+    <div class="page-sub">Your alerts & updates</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);" id="notif-list">
+    <div style="text-align:center;color:var(--gray);padding:40px;">No notifications yet</div>
+  </div>
+</div>
+
+<!-- QR SCAN -->
+<div class="screen" id="qrscan">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('home')">←</button>
+    <div class="page-title">📷 QR Scanner</div>
+    <div class="page-sub">Scan to transfer money</div>
+  </div>
+  <div class="page-body" style="background:var(--bg);">
+    <!-- QR Type selector -->
+    <div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px;">
+      <p style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">Select QR Type</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button onclick="setQRType('upi')" id="qrt-upi" style="padding:14px;border-radius:12px;border:2px solid #1a3c6e;background:#1a3c6e;color:white;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">📱 UPI QR</button>
+        <button onclick="setQRType('bank')" id="qrt-bank" style="padding:14px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">🏦 Bank QR</button>
+        <button onclick="setQRType('local')" id="qrt-local" style="padding:14px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">🇲🇻 Local QR</button>
+        <button onclick="setQRType('intl')" id="qrt-intl" style="padding:14px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">🌍 International</button>
+      </div>
+    </div>
+    <!-- QR Scanner box -->
+    <div style="background:var(--card);border-radius:20px;padding:20px;text-align:center;margin-bottom:16px;">
+      <div style="width:220px;height:220px;border:3px solid #1a3c6e;border-radius:16px;margin:0 auto;display:flex;align-items:center;justify-content:center;position:relative;background:var(--light);overflow:hidden;">
+        <div style="position:absolute;width:100%;height:3px;background:linear-gradient(90deg,transparent,#059669,transparent);animation:scan 2s linear infinite;"></div>
+        <div style="text-align:center;">
+          <div style="font-size:48px;">📷</div>
+          <p style="color:var(--gray);font-size:13px;margin-top:8px;">Camera preview</p>
+        </div>
+      </div>
+      <button onclick="openQR('scan')" style="margin-top:16px;padding:14px 32px;background:#1a3c6e;color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">📷 Open Camera</button>
+    </div>
+    <!-- Manual entry -->
+    <div style="background:var(--card);border-radius:16px;padding:16px;">
+      <p style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">Or enter QR data manually</p>
+      <input type="text" class="form-input" id="qr-manual" placeholder="Paste UPI ID or account details">
+      <button onclick="processManualQR()" class="btn btn-primary" style="margin-top:12px;">Process →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="screen" id="profile">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('home')">←</button>
+    <div class="page-title" id="p-title">My Profile</div>
+    <div class="page-sub" id="p-sub">Manage your account</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="width:80px;height:80px;background:linear-gradient(135deg,#1a3c6e,#2563eb);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;">👤</div>
+      <div style="font-size:20px;font-weight:800;color:var(--text);" id="prof-name">Loading...</div>
+      <div style="color:var(--gray);font-size:14px;margin-top:4px;" id="prof-email">Loading...</div>
+      <div style="display:inline-flex;align-items:center;background:#f0fdf4;border-radius:20px;padding:6px 14px;margin-top:10px;">
+        <span style="color:var(--green);font-size:12px;font-weight:700;">✓ Verified Account</span>
+      </div>
+    </div>
+    <div style="background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div class="menu-item" onclick="go('bank')"><div class="menu-icon">🏦</div><div class="menu-text" id="m-bank">Bank Accounts</div><span class="menu-arrow">›</span></div>
+      <div class="menu-item" onclick="go('referral')"><div class="menu-icon" style="background:#f0fdf4;">🎁</div><div style="flex:1;"><div class="menu-text" id="m-refer">Refer & Earn</div><div style="font-size:12px;color:var(--green);" id="m-refer-sub">Earn MVR 20 per referral!</div></div><span class="menu-arrow">›</span></div>
+      <div class="menu-item" onclick="go('notifications')"><div class="menu-icon">🔔</div><div class="menu-text" id="m-notif">Notifications</div><span class="menu-arrow">›</span></div>
+      <div class="menu-item" onclick="go('security')"><div class="menu-icon">🔐</div><div class="menu-text" id="m-security">Security & PIN</div><span class="menu-arrow">›</span></div>
+      <div class="menu-item" onclick="go('language')"><div class="menu-icon">🌐</div><div class="menu-text" id="m-lang">Language</div><span class="menu-arrow">›</span></div>
+      <div class="menu-item" onclick="toggleDark()">
+        <div class="menu-icon" id="dark-icon">🌙</div>
+        <div class="menu-text" id="dark-label">Dark Mode</div>
+        <div class="toggle-wrap" id="dark-toggle"><div class="toggle-thumb" id="dark-thumb"></div></div>
+      </div>
+      <div class="menu-item" onclick="doLogout()"><div class="menu-icon" style="background:#fef2f2;">🚪</div><div class="menu-text" style="color:#ef4444;" id="m-logout">Logout</div><span style="color:#ef4444;" class="menu-arrow">›</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BANK ACCOUNTS -->
+<div class="screen" id="bank">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('profile')">←</button>
+    <div class="page-title" id="b-title">Bank Accounts</div>
+    <div class="page-sub" id="b-sub">Your linked accounts</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <!-- Maldives Banks -->
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:0.08em;">🇲🇻 MALDIVES BANK (MVR)</p>
+    <div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px;border:1.5px solid var(--border);">
+      <div class="form-group">
+        <label class="form-label">Bank</label>
+        <select class="form-input" id="bml-bank">
+          <option>Bank of Maldives (BML)</option>
+          <option>Maldives Islamic Bank (MIB)</option>
+          <option>STO</option>
+          <option>MIFCO</option>
+          <option>Dhiraagu Pay</option>
+          <option>Ooredoo Money</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Account Number</label><input type="tel" class="form-input" id="bml-acc" placeholder="7770000123456"></div>
+      <div class="form-group"><label class="form-label">Account Holder Name</label><input type="text" class="form-input" id="bml-name" placeholder="Full name as in bank"></div>
+      <button class="btn btn-primary" onclick="saveBMLBank()" style="margin-top:4px;">Save MVR Account ✅</button>
+    </div>
+
+    <!-- India Banks -->
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:0.08em;">🇮🇳 INDIA ACCOUNT (INR)</p>
+    <div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px;border:1.5px solid var(--border);">
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button id="upi-tab" onclick="switchIndiaTab('upi')" style="flex:1;padding:11px;border-radius:11px;border:2px solid #1a3c6e;background:#1a3c6e;color:white;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">📱 UPI</button>
+        <button id="bank-tab" onclick="switchIndiaTab('bank')" style="flex:1;padding:11px;border-radius:11px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">🏦 Bank</button>
+      </div>
+      <!-- UPI -->
+      <div id="upi-section">
+        <div class="form-group"><label class="form-label">UPI Phone / UPI ID</label><div class="phone-row"><div class="phone-code">🇮🇳 +91</div><input type="tel" class="phone-input" id="india-phone" placeholder="98765 43210" maxlength="10"></div></div>
+        <div class="form-group"><label class="form-label">Account Holder Name</label><input type="text" class="form-input" id="india-upi-name" placeholder="Recipient full name"></div>
+        <p style="color:var(--gray);font-size:12px;margin-bottom:12px;">💡 Works with any UPI-linked phone</p>
+        <button class="btn btn-primary" onclick="saveIndiaUPI()">Save UPI ✅</button>
+      </div>
+      <!-- Bank Transfer -->
+      <div id="bank-section" style="display:none;">
+        <div class="form-group"><label class="form-label">Account Holder Name</label><input type="text" class="form-input" id="india-acc-name" placeholder="Full name as in bank"></div>
+        <div class="form-group">
+          <label class="form-label">Bank Name</label>
+          <select class="form-input" id="india-bank-name">
+            <option>State Bank of India (SBI)</option>
+            <option>HDFC Bank</option>
+            <option>ICICI Bank</option>
+            <option>Axis Bank</option>
+            <option>Punjab National Bank</option>
+            <option>Bank of Baroda</option>
+            <option>Canara Bank</option>
+            <option>Kotak Mahindra Bank</option>
+            <option>Union Bank of India</option>
+            <option>Indian Bank</option>
+            <option>IndusInd Bank</option>
+            <option>Yes Bank</option>
+            <option>Federal Bank</option>
+            <option>South Indian Bank</option>
+            <option>Bank of India</option>
+            <option>Central Bank of India</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Account Number</label><input type="tel" class="form-input" id="india-acc-num" placeholder="1234567890123456"></div>
+        <div class="form-group"><label class="form-label">IFSC Code</label><input type="text" class="form-input" id="india-ifsc" placeholder="SBIN0001234" style="text-transform:uppercase;"></div>
+        <div class="form-group"><label class="form-label">Account Type</label><select class="form-input" id="india-acc-type"><option>Savings Account</option><option>Current Account</option></select></div>
+        <p style="color:var(--gray);font-size:12px;margin-bottom:12px;">💡 Money via IMPS/NEFT in 30 minutes</p>
+        <button class="btn btn-primary" onclick="saveIndiaBankTransfer()">Save Bank Account ✅</button>
+      </div>
+    </div>
+
+    <!-- Saved accounts -->
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:0.08em;">SAVED ACCOUNTS</p>
+    <div id="saved-banks"><div style="text-align:center;color:var(--gray);padding:20px;">No accounts saved yet</div></div>
+  </div>
+</div>
+
+<!-- SECURITY -->
+<div class="screen" id="security">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('profile')">←</button>
+    <div class="page-title">Security & PIN 🔐</div>
+    <div class="page-sub">Manage your security settings</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <div style="background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);margin-bottom:16px;">
+      <div class="menu-item" onclick="go('setpin')"><div class="menu-icon">🔢</div><div style="flex:1;"><div class="menu-text">Change Transaction PIN</div><div style="font-size:12px;color:var(--gray);">Update your 4-digit PIN</div></div><span class="menu-arrow">›</span></div>
+      <div class="menu-item">
+        <div class="menu-icon">🔒</div>
+        <div style="flex:1;"><div class="menu-text">Auto Lock</div><div style="font-size:12px;color:var(--gray);">Lock after 30 min inactivity</div></div>
+        <div class="toggle-wrap on"><div class="toggle-thumb" style="left:22px;"></div></div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">👁️</div>
+        <div style="flex:1;"><div class="menu-text">Hide Balance</div><div style="font-size:12px;color:var(--gray);">Hide amounts on home screen</div></div>
+        <div class="toggle-wrap" id="hide-bal-toggle" onclick="toggleHideBal()"><div class="toggle-thumb" id="hide-bal-thumb"></div></div>
+      </div>
+    </div>
+    <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:14px;margin-top:8px;">
+      <p style="color:#92400e;font-size:13px;font-weight:600;">🔒 Security Tips</p>
+      <p style="color:#92400e;font-size:12px;margin-top:6px;">• Never share your PIN with anyone<br>• SendMV staff will never ask for your PIN<br>• Use a unique PIN not used elsewhere</p>
+    </div>
+  </div>
+</div>
+
+<!-- LANGUAGE -->
+<div class="screen" id="language">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('profile')">←</button>
+    <div class="page-title">Language 🌐</div>
+    <div class="page-sub">Choose your language</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <div style="background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div class="menu-item" onclick="setLang('en');go('profile');">
+        <div class="menu-icon">🇬🇧</div>
+        <div style="flex:1;"><div class="menu-text">English</div><div style="font-size:12px;color:var(--gray);">English language</div></div>
+        <span id="lang-en-check" style="color:var(--green);font-weight:700;">✓</span>
+      </div>
+      <div class="menu-item" onclick="setLang('dv');go('profile');">
+        <div class="menu-icon">🇲🇻</div>
+        <div style="flex:1;"><div class="menu-text">ދިވެހި</div><div style="font-size:12px;color:var(--gray);">Dhivehi language</div></div>
+        <span id="lang-dv-check" style="color:var(--green);font-weight:700;display:none;">✓</span>
+      </div>
+    </div>
+    <div style="background:var(--light);border-radius:12px;padding:14px;margin-top:16px;">
+      <p style="color:var(--gray);font-size:13px;">More languages coming soon! 🌍</p>
+    </div>
+  </div>
+</div>
+
+<!-- REFERRAL -->
+<div class="screen" id="referral">
+  <div class="page-header">
+    <button class="back-btn" onclick="go('profile')">←</button>
+    <div class="page-title">Refer & Earn 🎁</div>
+    <div class="page-sub" id="r-earn-sub">Invite friends, earn MVR 20!</div>
+  </div>
+  <div class="page-body with-nav" style="background:var(--bg);">
+    <div style="background:linear-gradient(135deg,#059669,#047857);border-radius:20px;padding:24px;text-align:center;margin-bottom:20px;">
+      <div style="color:rgba(255,255,255,0.8);font-size:13px;" id="r-total-earn">Total Earnings</div>
+      <div style="color:white;font-size:40px;font-weight:800;margin-top:4px;" id="ref-earnings">MVR 0</div>
+      <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-top:4px;" id="ref-count">0 friends referred</div>
+    </div>
+    <div style="background:var(--card);border-radius:16px;padding:20px;margin-bottom:16px;border:1.5px dashed var(--border);text-align:center;">
+      <div style="font-size:13px;color:var(--gray);margin-bottom:8px;" id="r-code-label">Your Referral Code</div>
+      <div style="font-size:32px;font-weight:800;color:var(--text);letter-spacing:4px;" id="ref-code">SENDMV00</div>
+      <button onclick="copyRefCode()" style="margin-top:12px;padding:10px 24px;background:var(--navy);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;" id="r-copy">📋 Copy Code</button>
+    </div>
+    <p style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;" id="r-share-via">Share via</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <button onclick="shareWhatsApp()" style="padding:14px;background:#25D366;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">💬 WhatsApp</button>
+      <button onclick="shareTelegram()" style="padding:14px;background:#0088cc;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✈️ Telegram</button>
+      <button onclick="shareSMS()" style="padding:14px;background:var(--navy);color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">📱 SMS</button>
+      <button onclick="shareLink()" style="padding:14px;background:var(--light);color:var(--text);border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">🔗 Copy Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottom-nav" style="display:none;">
+  <button class="nav-item active" id="nav-home" onclick="go('home')"><span class="nav-icon">🏠</span><span class="nav-label" id="nav-home-label">Home</span></button>
+  <button class="nav-item" id="nav-send" onclick="go('send')"><span class="nav-icon">💸</span><span class="nav-label" id="nav-send-label">Send</span></button>
+  <button class="nav-item" id="nav-history" onclick="go('history')"><span class="nav-icon">📋</span><span class="nav-label" id="nav-hist-label">History</span></button>
+  <button class="nav-item" id="nav-profile" onclick="go('profile')"><span class="nav-icon">👤</span><span class="nav-label" id="nav-prof-label">Profile</span></button>
+</div>
+</div>
+
 <script>
-// ── Config ──────────────────────────────────────────────────
 const API = 'https://sendmv.onrender.com';
 
 // ── State ────────────────────────────────────────────────────
-let state = {
-  token: localStorage.getItem('sendmv_token') || null,
-  user: JSON.parse(localStorage.getItem('sendmv_user') || 'null'),
+const state = {
+  token: localStorage.getItem('smv_token'),
+  user: JSON.parse(localStorage.getItem('smv_user') || 'null'),
   rate: 4.82,
   mvr: 0, inr: 0,
-  recName: '', recPhone: ''
+  recName: '', recPhone: '',
+  transferType: 'upi',
+  qrType: 'upi',
+  pinSet: '', pinConfirm: '',
+  lang: localStorage.getItem('smv_lang') || 'en',
+  notifications: JSON.parse(localStorage.getItem('smv_notifs') || '[]'),
+  bankData: {}
 };
 
-// ── Helpers ──────────────────────────────────────────────────
+// ── Translations ──────────────────────────────────────────────
+const T = {
+  en: {
+    splash_sub: 'Maldives → India Transfers',
+    w_title: 'Send money to India 🇮🇳 instantly',
+    w_sub: 'From Maldives 🇲🇻 in minutes',
+    w_rate: 'Live rate:',
+    f1: 'Instant Transfers', f1s: 'Arrives in ~30 minutes via UPI',
+    f2: 'Bank-Level Security', f2s: '256-bit encryption & MMA licensed',
+    f3: 'Best Exchange Rates', f3s: 'Low fees, best MVR to INR rates',
+    btn_create: 'Create Account', btn_login: 'I have an account',
+    h_greeting: 'Good morning 👋', h_rate_label: "Today's Rate",
+    h_rate_tag: '↑ Best rate guaranteed', h_recent: 'Recent Transfers',
+    h_send_btn: '💸  Send Money to India',
+    q_send: 'Send', q_scan: 'Scan QR', q_hist: 'History', q_prof: 'Profile',
+    nav_home: 'Home', nav_send: 'Send', nav_hist: 'History', nav_prof: 'Profile',
+    p_title: 'My Profile', p_sub: 'Manage your account',
+    m_bank: 'Bank Accounts', m_refer: 'Refer & Earn', m_refer_sub: 'Earn MVR 20 per referral!',
+    m_notif: 'Notifications', m_security: 'Security & PIN', m_lang: 'Language', m_logout: 'Logout',
+    suc_title: 'Transfer Sent!', suc_sent: 'You sent', suc_received: 'They get', suc_home: 'Back to Home', suc_receipt: '📄 Download Receipt',
+    r_earn_sub: 'Invite friends, earn MVR 20!',
+  },
+  dv: {
+    splash_sub: 'މޯލްޑިވްސް → އިންޑިއާ ޓްރާންސްފާ',
+    w_title: 'އިންޑިއާ 🇮🇳 އަށް ފައިސާ ފޮނުވާ',
+    w_sub: 'މޯލްޑިވްސް 🇲🇻 އިން މިނިޓްތަކެއްގެ ތެރޭ',
+    w_rate: 'ލައިވް ރޭޓް:',
+    f1: 'ހަލުވި ޓްރާންސްފާ', f1s: '~30 މިނިޓްގެ ތެރޭ ލިބޭ',
+    f2: 'ބޭންކް ލެވެލް ސެކިއުރިޓީ', f2s: '256-ބިޓް ހިމާޔަތް',
+    f3: 'އެންމެ ރަނގަޅު ރޭޓް', f3s: 'ކުޑަ ފީ، ރަނގަޅު ރޭޓް',
+    btn_create: 'އެކައުންޓް ހަދާ', btn_login: 'ލޮގިން ކުރޭ',
+    h_greeting: 'ހެނދުނު ހެޔޮ 👋', h_rate_label: 'މިއަދުގެ ރޭޓް',
+    h_rate_tag: '↑ އެންމެ ރަނގަޅު ރޭޓް', h_recent: 'ފަހުގެ ޓްރާންސްފާ',
+    h_send_btn: '💸  އިންޑިއާ އަށް ފައިސާ ފޮނުވާ',
+    q_send: 'ފޮނުވާ', q_scan: 'QR ސްކޭން', q_hist: 'ތާރީޚް', q_prof: 'ޕްރޮފައިލް',
+    nav_home: 'ހޯމް', nav_send: 'ފޮނުވާ', nav_hist: 'ތާރީޚް', nav_prof: 'ޕްރޮފައިލް',
+    p_title: 'ޕްރޮފައިލް', p_sub: 'އެކައުންޓް މެނޭޖް ކުރޭ',
+    m_bank: 'ބޭންކް އެކައުންޓް', m_refer: 'ރިފަ ކޮށް ކަމާ', m_refer_sub: 'ކޮންމެ ރިފަ ރަލަކަށް MVR 20!',
+    m_notif: 'ނޮޓިފިކޭޝަން', m_security: 'ސެކިއުރިޓީ', m_lang: 'ބަސް', m_logout: 'ލޮގްއައުޓް',
+    suc_title: 'ފޮނުވިއްޖެ!', suc_sent: 'ފޮނުވި', suc_received: 'ލިބޭ', suc_home: 'ހޯމް ޕޭޖް', suc_receipt: '📄 ރިސީޓް ޑައުންލޯޑް',
+    r_earn_sub: 'ރަހްމަތްތެރިން ދައްކާ، MVR 20 ހޯދާ!',
+  }
+};
+
+function setLang(lang) {
+  state.lang = lang;
+  localStorage.setItem('smv_lang', lang);
+  const t = T[lang];
+  const setEl = (id, txt) => { const el = document.getElementById(id); if(el) el.textContent = txt; };
+  setEl('splash-sub', t.splash_sub);
+  setEl('w-title', t.w_title); setEl('w-sub', t.w_sub); setEl('w-rate-label', t.w_rate);
+  setEl('f1', t.f1); setEl('f1s', t.f1s); setEl('f2', t.f2); setEl('f2s', t.f2s); setEl('f3', t.f3); setEl('f3s', t.f3s);
+  setEl('btn-create', t.btn_create); setEl('btn-login', t.btn_login);
+  setEl('h-greeting', t.h_greeting); setEl('h-rate-label', t.h_rate_label);
+  setEl('h-rate-tag', t.h_rate_tag); setEl('h-recent', t.h_recent);
+  setEl('h-send-btn', t.h_send_btn);
+  setEl('q-send', t.q_send); setEl('q-scan', t.q_scan); setEl('q-hist', t.q_hist); setEl('q-prof', t.q_prof);
+  setEl('nav-home-label', t.nav_home); setEl('nav-send-label', t.nav_send); setEl('nav-hist-label', t.nav_hist); setEl('nav-prof-label', t.nav_prof);
+  setEl('p-title', t.p_title); setEl('p-sub', t.p_sub);
+  setEl('m-bank', t.m_bank); setEl('m-refer', t.m_refer); setEl('m-refer-sub', t.m_refer_sub);
+  setEl('m-notif', t.m_notif); setEl('m-security', t.m_security); setEl('m-lang', t.m_lang); setEl('m-logout', t.m_logout);
+  setEl('suc-title', t.suc_title); setEl('suc-sent', t.suc_sent); setEl('suc-received', t.suc_received); setEl('suc-home', t.suc_home); setEl('suc-receipt', t.suc_receipt);
+  setEl('r-earn-sub', t.r_earn_sub);
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.getElementById('lang-dv').classList.toggle('active', lang === 'dv');
+  const enCheck = document.getElementById('lang-en-check');
+  const dvCheck = document.getElementById('lang-dv-check');
+  if(enCheck) enCheck.style.display = lang === 'en' ? '' : 'none';
+  if(dvCheck) dvCheck.style.display = lang === 'dv' ? '' : 'none';
+}
+
+// ── Toast ────────────────────────────────────────────────────
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -705,6 +900,7 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+// ── Screen Navigation ────────────────────────────────────────
 function go(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const s = document.getElementById(id);
@@ -713,19 +909,18 @@ function go(id) {
   s.classList.add('slide-up');
   setTimeout(() => s.classList.remove('slide-up'), 300);
   const nav = document.getElementById('bottom-nav');
-  const showNav = ['home','send','history','profile','bank','referral','recipient','confirm','success'].includes(id);
+  const showNav = ['home','send','history','profile','bank','referral','notifications','qrscan','recipient','confirm','success','security','language'].includes(id);
   nav.style.display = (showNav && state.token) ? 'flex' : 'none';
-  ['home','send','history','profile'].forEach(n => {
-    document.getElementById('nav-'+n)?.classList.toggle('active', n === id);
-  });
+  ['home','send','history','profile'].forEach(n => document.getElementById('nav-'+n)?.classList.toggle('active', n === id));
   if (id === 'home') setTimeout(loadHome, 100);
   if (id === 'history') setTimeout(loadHistory, 100);
   if (id === 'referral') setTimeout(loadReferral, 100);
   if (id === 'bank') setTimeout(loadSavedBanks, 100);
+  if (id === 'notifications') setTimeout(loadNotifications, 100);
+  if (id === 'recipient') setTimeout(loadSavedRecipients, 100);
 }
 
-function navTo(id) { go(id); }
-
+// ── API Helper ───────────────────────────────────────────────
 async function apiFetch(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
@@ -736,42 +931,29 @@ async function apiFetch(path, opts = {}) {
 // ── Live Rate ─────────────────────────────────────────────────
 async function fetchRate() {
   try {
-    // Use free external API directly - no backend needed!
     const res = await fetch('https://open.er-api.com/v6/latest/MVR');
     const data = await res.json();
-    if (data.rates && data.rates.INR) {
-      state.rate = data.rates.INR;
-      updateRateDisplay();
-      return;
-    }
+    if (data.rates?.INR) { state.rate = data.rates.INR; updateRateUI(); return; }
   } catch(e) {}
   try {
-    // Second fallback API
     const res2 = await fetch('https://api.exchangerate-api.com/v4/latest/MVR');
     const data2 = await res2.json();
-    if (data2.rates && data2.rates.INR) {
-      state.rate = data2.rates.INR;
-      updateRateDisplay();
-      return;
-    }
+    if (data2.rates?.INR) { state.rate = data2.rates.INR; updateRateUI(); return; }
   } catch(e) {}
-  // Final fallback - use default rate
   state.rate = 4.82;
-  updateRateDisplay();
+  updateRateUI();
 }
 
-function updateRateDisplay() {
-  const rateText = `1 MVR = ${state.rate.toFixed(2)} INR`;
-  const welcomeRate = document.getElementById('welcome-rate');
-  const homeRate = document.getElementById('home-rate');
-  const feeRate = document.getElementById('fee-rate');
-  if (welcomeRate) welcomeRate.textContent = rateText;
-  if (homeRate) homeRate.textContent = rateText;
-  if (feeRate) feeRate.textContent = rateText;
+function updateRateUI() {
+  const r = `1 MVR = ${state.rate.toFixed(2)} INR`;
+  ['welcome-rate','home-rate'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = id==='welcome-rate'?r:r; });
+  const fr = document.getElementById('fee-rate');
+  if(fr) fr.textContent = r;
 }
 
 // ── Splash ────────────────────────────────────────────────────
 setTimeout(async () => {
+  setLang(state.lang);
   await fetchRate();
   if (state.token && state.user) {
     loginUser(state.user);
@@ -786,32 +968,22 @@ async function doSignup() {
   const phone = document.getElementById('su-phone').value.trim();
   const email = document.getElementById('su-email').value.trim();
   const password = document.getElementById('su-pass').value;
-
   if (!name) { showToast('❌ Enter your name'); return; }
   if (!phone) { showToast('❌ Enter your phone'); return; }
   if (!email) { showToast('❌ Enter your email'); return; }
   if (password.length < 8) { showToast('❌ Password min 8 characters'); return; }
-
   const btn = document.getElementById('su-btn');
   btn.disabled = true;
   btn.innerHTML = '<span class="loader"></span> Creating...';
-
   try {
-    const data = await apiFetch('/api/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify({ name, phone, email, password })
-    });
+    const data = await apiFetch('/api/auth/signup', { method:'POST', body:JSON.stringify({name,phone,email,password}) });
     if (data.error) { showToast('❌ ' + data.error); return; }
-    state.tempUser = { name, phone, email, password };
+    state.tempUser = {name,phone,email,password};
     document.getElementById('otp-num').textContent = '+960 ' + phone;
     showToast('📱 OTP sent! Use 123456 for demo');
     go('otp');
-  } catch(e) {
-    showToast('❌ Connection error. Try again.');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'Create Account →';
-  }
+  } catch(e) { showToast('❌ Connection error'); }
+  finally { btn.disabled = false; btn.textContent = 'Create Account →'; }
 }
 
 // ── OTP ───────────────────────────────────────────────────────
@@ -819,53 +991,88 @@ function otpIn(el, i) {
   if (el.value.length === 1) {
     const boxes = document.querySelectorAll('.otp-box');
     if (i < 5) boxes[i+1].focus();
-    if (i === 5) checkOTP();
+    if (i === 5) verifyOTP();
   }
 }
-function otpKey(e, el, i) {
-  if (e.key === 'Backspace' && !el.value && i > 0)
-    document.querySelectorAll('.otp-box')[i-1].focus();
-}
-function checkOTP() {
-  const code = Array.from(document.querySelectorAll('.otp-box')).map(b => b.value).join('');
-  if (code.length === 6) verifyOTP();
-}
+function otpKey(e, el, i) { if (e.key==='Backspace' && !el.value && i>0) document.querySelectorAll('.otp-box')[i-1].focus(); }
 
 async function verifyOTP() {
   const code = Array.from(document.querySelectorAll('.otp-box')).map(b => b.value).join('');
   if (code.length < 6) { showToast('❌ Enter 6-digit code'); return; }
-
   try {
-    const data = await apiFetch('/api/auth/verify-otp', {
-      method: 'POST',
-      body: JSON.stringify({ phone: state.tempUser?.phone, otp: code })
-    });
-    if (data.error) { showToast('❌ ' + data.error); return; }
-    if (data.token) {
-      state.token = data.token;
-      localStorage.setItem('sendmv_token', data.token);
-      loginUser(data.user);
+    const data = await apiFetch('/api/auth/verify-otp', { method:'POST', body:JSON.stringify({phone:state.tempUser?.phone,otp:code}) });
+    if (data.token) { state.token = data.token; localStorage.setItem('smv_token', data.token); go('setpin'); return; }
+  } catch(e) {}
+  if (code === '123456') {
+    try {
+      const ld = await apiFetch('/api/auth/login', { method:'POST', body:JSON.stringify({identifier:state.tempUser?.phone||state.tempUser?.email,password:state.tempUser?.password}) });
+      if (ld.token) { state.token = ld.token; localStorage.setItem('smv_token', ld.token); go('setpin'); return; }
+    } catch(e) {}
+    go('setpin');
+  } else { showToast('❌ Wrong OTP. Use 123456'); }
+}
+
+// ── PIN ───────────────────────────────────────────────────────
+let pinSetVal = '', pinConfirmVal = '';
+function pinInput(num, mode) {
+  if (mode === 'set') {
+    if (pinSetVal.length < 4) {
+      pinSetVal += num;
+      updatePinDots('set', pinSetVal);
+      if (pinSetVal.length === 4) {
+        setTimeout(() => {
+          showToast('✅ PIN set! Confirm your PIN');
+          pinSetVal = '';
+          updatePinDots('set', '');
+          // Switch to confirm mode
+          document.querySelector('#setpin .page-title').textContent = 'Confirm Your PIN';
+          document.querySelector('#setpin .page-sub').textContent = 'Re-enter your 4-digit PIN';
+          pinSetMode = 'confirm';
+        }, 300);
+      }
     }
-  } catch(e) {
-    // Backend verify failed - try direct login for demo
-    if (code === '123456') {
-      try {
-        const loginData = await apiFetch('/api/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({ identifier: state.tempUser?.phone || state.tempUser?.email, password: state.tempUser?.password })
-        });
-        if (loginData.token) {
-          state.token = loginData.token;
-          localStorage.setItem('sendmv_token', loginData.token);
-          loginUser(loginData.user);
-          return;
+  } else if (mode === 'confirm') {
+    if (pinConfirmVal.length < 4) {
+      pinConfirmVal += num;
+      updatePinDots('set', pinConfirmVal);
+      if (pinConfirmVal.length === 4) {
+        localStorage.setItem('smv_pin', pinConfirmVal);
+        showToast('🔐 PIN saved successfully!');
+        pinSetVal = ''; pinConfirmVal = '';
+        if (state.tempUser) { loginUser({name:state.tempUser.name,email:state.tempUser.email}); }
+        else { go('home'); }
+      }
+    }
+  } else if (mode === 'transfer') {
+    if (pinConfirmVal.length < 4) {
+      pinConfirmVal += num;
+      updatePinDots('confirm', pinConfirmVal);
+      if (pinConfirmVal.length === 4) {
+        const savedPin = localStorage.getItem('smv_pin');
+        if (!savedPin || pinConfirmVal === savedPin) {
+          pinConfirmVal = '';
+          doTransfer();
+        } else {
+          showToast('❌ Wrong PIN! Try again.');
+          pinConfirmVal = '';
+          updatePinDots('confirm', '');
         }
-      } catch(e2) {}
-      // Fallback demo login
-      loginUser({ name: state.tempUser?.name, email: state.tempUser?.email });
-    } else {
-      showToast('❌ Wrong OTP. Use 123456');
+      }
     }
+  }
+}
+
+let pinSetMode = 'set';
+function pinDelete(mode) {
+  if (mode === 'set') { pinSetVal = pinSetVal.slice(0,-1); updatePinDots('set', pinSetMode==='confirm'?pinConfirmVal:pinSetVal); }
+  else if (mode === 'confirm') { pinConfirmVal = pinConfirmVal.slice(0,-1); updatePinDots('confirm', pinConfirmVal); }
+}
+
+function updatePinDots(type, val) {
+  const prefix = type === 'set' ? 'pd' : 'cp';
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById(prefix + i);
+    if (dot) { dot.classList.toggle('filled', i < val.length); dot.textContent = i < val.length ? '●' : '​'; }
   }
 }
 
@@ -875,188 +1082,278 @@ async function doLogin() {
   const password = document.getElementById('li-pass').value;
   if (!identifier) { showToast('❌ Enter phone or email'); return; }
   if (!password) { showToast('❌ Enter password'); return; }
-
   const btn = document.getElementById('li-btn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="loader"></span> Logging in...';
-
+  btn.innerHTML = '<span class="loader"></span>';
   try {
-    const data = await apiFetch('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ identifier, password })
-    });
+    const data = await apiFetch('/api/auth/login', { method:'POST', body:JSON.stringify({identifier,password}) });
     if (data.error) { showToast('❌ ' + data.error); return; }
     state.token = data.token;
-    localStorage.setItem('sendmv_token', data.token);
+    localStorage.setItem('smv_token', data.token);
     loginUser(data.user);
-  } catch(e) {
-    showToast('❌ Connection error. Try again.');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'Login →';
-  }
+  } catch(e) { showToast('❌ Connection error'); }
+  finally { btn.disabled = false; btn.textContent = 'Login →'; }
 }
 
 function loginUser(user) {
   state.user = user;
-  localStorage.setItem('sendmv_user', JSON.stringify(user));
-  document.getElementById('home-name').textContent = user?.name || 'User';
-  document.getElementById('prof-name').textContent = user?.name || 'User';
-  document.getElementById('prof-email').textContent = user?.email || '';
-  showToast('✅ Welcome, ' + (user?.name || 'User') + '!');
+  localStorage.setItem('smv_user', JSON.stringify(user));
+  ['home-name','prof-name'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = user?.name||'User'; });
+  const pe = document.getElementById('prof-email');
+  if(pe) pe.textContent = user?.email||'';
+  addNotification('✅ Login successful', 'Welcome back, ' + (user?.name||'User') + '!');
+  showToast('✅ Welcome, ' + (user?.name||'User') + '!');
   setTimeout(() => go('home'), 500);
 }
 
 function doLogout() {
-  state.token = null;
-  state.user = null;
-  localStorage.removeItem('sendmv_token');
-  localStorage.removeItem('sendmv_user');
+  state.token = null; state.user = null;
+  localStorage.removeItem('smv_token'); localStorage.removeItem('smv_user');
   showToast('👋 Logged out');
   setTimeout(() => go('welcome'), 1000);
 }
 
+// ── Notifications ─────────────────────────────────────────────
+function addNotification(title, msg) {
+  const notifs = JSON.parse(localStorage.getItem('smv_notifs') || '[]');
+  notifs.unshift({ title, msg, time: new Date().toLocaleString(), read: false });
+  if (notifs.length > 20) notifs.pop();
+  localStorage.setItem('smv_notifs', JSON.stringify(notifs));
+  updateNotifBadge();
+}
+
+function updateNotifBadge() {
+  const notifs = JSON.parse(localStorage.getItem('smv_notifs') || '[]');
+  const unread = notifs.filter(n => !n.read).length;
+  const badge = document.getElementById('notif-count');
+  if (badge) { badge.style.display = unread > 0 ? 'flex' : 'none'; badge.textContent = unread; }
+}
+
+function loadNotifications() {
+  const notifs = JSON.parse(localStorage.getItem('smv_notifs') || '[]');
+  // Mark all as read
+  notifs.forEach(n => n.read = true);
+  localStorage.setItem('smv_notifs', JSON.stringify(notifs));
+  updateNotifBadge();
+  const container = document.getElementById('notif-list');
+  if (!notifs.length) { container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:40px;">No notifications yet 🔔</div>'; return; }
+  container.innerHTML = notifs.map(n => `
+    <div class="notif-item">
+      <div style="font-size:24px;">🔔</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;color:var(--text);font-size:14px;">${n.title}</div>
+        <div style="color:var(--gray);font-size:13px;margin-top:2px;">${n.msg}</div>
+        <div style="color:var(--gray);font-size:11px;margin-top:4px;">${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+
 // ── Home ──────────────────────────────────────────────────────
 async function loadHome() {
-  document.getElementById('home-name').textContent = state.user?.name || 'User';
-  document.getElementById('home-rate').textContent = `1 MVR = ${state.rate.toFixed(2)} INR`;
+  const name = document.getElementById('home-name');
+  if(name) name.textContent = state.user?.name || 'User';
+  updateRateUI();
+  updateNotifBadge();
   loadRecentTxns();
 }
 
 async function loadRecentTxns() {
   const container = document.getElementById('home-txns');
+  if (!container) return;
   try {
     const data = await apiFetch('/api/transfer/history');
-    if (!data.length) {
+    if (!Array.isArray(data) || !data.length) {
       container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:20px;">No transfers yet. Send your first one! 💸</div>';
       return;
     }
     container.innerHTML = data.slice(0,3).map(tx => `
       <div class="tx-card">
-        <div class="tx-flag">🇮🇳</div>
-        <div style="flex:1;">
-          <div class="tx-name">${tx.recipientName}</div>
-          <div class="tx-date">${new Date(tx.createdAt).toLocaleDateString()}</div>
-        </div>
-        <div class="tx-amount">
-          <div class="tx-mvr">MVR ${tx.mvrAmount}</div>
-          <div class="tx-status">✓ ${tx.status}</div>
-        </div>
+        <div style="width:44px;height:44px;background:#f0f4ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;">🇮🇳</div>
+        <div style="flex:1;"><div style="font-weight:600;color:var(--text);font-size:14px;">${tx.recipientName||'Unknown'}</div><div style="color:var(--gray);font-size:12px;">${new Date(tx.createdAt).toLocaleDateString()}</div></div>
+        <div style="text-align:right;"><div style="font-weight:700;color:var(--text);">MVR ${tx.mvrAmount}</div><div style="color:var(--green);font-size:12px;">✓ ${tx.status}</div></div>
       </div>`).join('');
   } catch(e) {
     container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:20px;">Could not load transfers</div>';
   }
 }
 
+// ── Transfer Type ─────────────────────────────────────────────
+function setTransferType(type) {
+  state.transferType = type;
+  ['upi','bank'].forEach(t => {
+    const btn = document.getElementById('tab-'+t);
+    if(btn) { btn.style.background = t===type?'#1a3c6e':'var(--card)'; btn.style.color = t===type?'white':'var(--text)'; btn.style.borderColor = t===type?'#1a3c6e':'var(--border)'; }
+  });
+}
+
+// ── QR ────────────────────────────────────────────────────────
+function openQR(mode) {
+  document.getElementById('qr-overlay').classList.add('show');
+  document.getElementById('qr-mode-label').textContent = mode === 'send' ? 'Scan recipient QR to fill details' : 'Point camera at QR code';
+}
+function closeQR() { document.getElementById('qr-overlay').classList.remove('show'); }
+function simulateQRScan() {
+  closeQR();
+  showToast('✅ QR Scanned! Details filled.');
+  document.getElementById('rec-name').value = 'Rahul Kumar';
+  document.getElementById('rec-phone').value = '9876543210';
+  go('recipient');
+}
+
+function setQRType(type) {
+  state.qrType = type;
+  ['upi','bank','local','intl'].forEach(t => {
+    const btn = document.getElementById('qrt-'+t);
+    if(btn) { btn.style.background = t===type?'#1a3c6e':'var(--card)'; btn.style.color = t===type?'white':'var(--text)'; btn.style.borderColor = t===type?'#1a3c6e':'var(--border)'; }
+  });
+}
+
+function processManualQR() {
+  const val = document.getElementById('qr-manual').value.trim();
+  if (!val) { showToast('❌ Enter QR data'); return; }
+  if (val.includes('@') || /^\d{10}$/.test(val)) {
+    document.getElementById('rec-phone').value = val.replace(/\D/g,'').slice(-10);
+    showToast('✅ UPI details filled!');
+    go('recipient');
+  } else { showToast('✅ QR processed!'); go('recipient'); }
+}
+
 // ── Send ──────────────────────────────────────────────────────
 function calcINR() {
   const mvr = parseFloat(document.getElementById('mvr-in').value) || 0;
-  state.mvr = mvr;
-  state.inr = mvr * state.rate;
-  document.getElementById('inr-out').textContent = state.inr > 0
-    ? '₹' + state.inr.toLocaleString('en-IN', { maximumFractionDigits: 2 })
-    : '0';
+  state.mvr = mvr; state.inr = +(mvr * state.rate).toFixed(2);
+  const inrOut = document.getElementById('inr-out');
+  if(inrOut) inrOut.textContent = state.inr > 0 ? '₹' + state.inr.toLocaleString('en-IN',{maximumFractionDigits:2}) : '0';
   const btn = document.getElementById('send-btn');
-  const feeTable = document.getElementById('fee-tbl');
+  const ft = document.getElementById('fee-tbl');
   if (mvr >= 50) {
-    btn.style.opacity = '1';
-    feeTable.style.display = 'block';
-    document.getElementById('fee-total').textContent = 'MVR ' + (mvr + 10).toFixed(2);
+    if(btn) btn.style.opacity = '1';
+    if(ft) ft.style.display = 'block';
+    const ftot = document.getElementById('fee-total');
+    if(ftot) ftot.textContent = 'MVR ' + (mvr+10).toFixed(2);
   } else {
-    btn.style.opacity = '0.5';
-    feeTable.style.display = 'none';
+    if(btn) btn.style.opacity = '0.5';
+    if(ft) ft.style.display = 'none';
   }
 }
 
 function goRecipient() {
   if (state.mvr < 50) { showToast('❌ Minimum MVR 50'); return; }
-  document.getElementById('rec-mvr').textContent = 'MVR ' + state.mvr;
-  document.getElementById('rec-inr').textContent = '₹' + state.inr.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const el1 = document.getElementById('rec-mvr'); if(el1) el1.textContent = 'MVR ' + state.mvr;
+  const el2 = document.getElementById('rec-inr'); if(el2) el2.textContent = '₹' + state.inr.toLocaleString('en-IN',{maximumFractionDigits:0});
+  const us = document.getElementById('rec-upi-section');
+  const bs = document.getElementById('rec-bank-section');
+  if(us) us.style.display = state.transferType==='bank' ? 'none' : 'block';
+  if(bs) bs.style.display = state.transferType==='bank' ? 'block' : 'none';
   go('recipient');
 }
 
+function loadSavedRecipients() {
+  const banks = JSON.parse(localStorage.getItem('smv_banks') || '[]');
+  const inrBanks = banks.filter(b => b.type !== 'MVR');
+  const container = document.getElementById('saved-recipients');
+  if (!container || !inrBanks.length) return;
+  container.innerHTML = '<p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:10px;">SAVED RECIPIENTS</p>' +
+    inrBanks.map(b => `
+      <div class="tx-card" style="cursor:pointer;" onclick="fillRecipient('${b.name}','${b.phone||b.acc||''}')">
+        <div style="width:40px;height:40px;background:#f0f4ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">🇮🇳</div>
+        <div style="flex:1;"><div style="font-weight:600;color:var(--text);font-size:14px;">${b.name}</div><div style="color:var(--gray);font-size:12px;">${b.method||b.type}</div></div>
+      </div>`).join('');
+}
+
+function fillRecipient(name, phone) {
+  const rn = document.getElementById('rec-name'); if(rn) rn.value = name;
+  const rp = document.getElementById('rec-phone'); if(rp) rp.value = phone;
+}
+
 function goConfirm() {
-  const name = document.getElementById('rec-name').value.trim();
-  const phone = document.getElementById('rec-phone').value.trim();
-  if (!name) { showToast('❌ Enter recipient name'); return; }
-  if (phone.length !== 10) { showToast('❌ Enter valid 10-digit phone'); return; }
-  state.recName = name;
-  state.recPhone = phone;
-  document.getElementById('conf-mvr').textContent = 'MVR ' + state.mvr;
-  document.getElementById('conf-inr').textContent = '₹' + state.inr.toLocaleString('en-IN', { maximumFractionDigits: 0 });
-  document.getElementById('conf-name').textContent = name;
-  document.getElementById('conf-phone').textContent = '+91 ' + phone;
-  document.getElementById('conf-rate').textContent = `1 MVR = ${state.rate.toFixed(2)} INR`;
+  let name, method;
+  if (state.transferType === 'bank') {
+    name = document.getElementById('rec-bank-name')?.value.trim();
+    const acc = document.getElementById('rec-acc-num')?.value.trim();
+    const ifsc = document.getElementById('rec-ifsc')?.value.trim().toUpperCase();
+    if (!name || !acc || !ifsc) { showToast('❌ Fill all bank details'); return; }
+    if (ifsc.length !== 11) { showToast('❌ IFSC must be 11 characters'); return; }
+    state.recName = name;
+    state.recPhone = acc;
+    method = '🏦 Bank: ' + acc + ' | IFSC: ' + ifsc;
+  } else {
+    name = document.getElementById('rec-name')?.value.trim();
+    const phone = document.getElementById('rec-phone')?.value.trim();
+    if (!name) { showToast('❌ Enter recipient name'); return; }
+    if (!phone || phone.length !== 10) { showToast('❌ Enter valid 10-digit phone'); return; }
+    state.recName = name; state.recPhone = phone;
+    method = '📱 UPI: +91 ' + phone;
+  }
+  const cm = document.getElementById('conf-mvr'); if(cm) cm.textContent = 'MVR ' + state.mvr;
+  const ci = document.getElementById('conf-inr'); if(ci) ci.textContent = '₹' + state.inr.toLocaleString('en-IN',{maximumFractionDigits:0});
+  const cn = document.getElementById('conf-name'); if(cn) cn.textContent = name;
+  const cmt = document.getElementById('conf-method'); if(cmt) cmt.textContent = method;
+  const cr = document.getElementById('conf-rate'); if(cr) cr.textContent = `1 MVR = ${state.rate.toFixed(2)} INR`;
+  pinConfirmVal = '';
+  updatePinDots('confirm', '');
   go('confirm');
 }
 
 async function doTransfer() {
-  const btn = document.getElementById('conf-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loader"></span> Processing...';
   try {
     const data = await apiFetch('/api/transfer/create', {
-      method: 'POST',
-      body: JSON.stringify({
-        recipientName: state.recName,
-        recipientPhone: state.recPhone,
-        mvrAmount: state.mvr,
-        inrAmount: state.inr,
-        exchangeRate: state.rate
-      })
+      method:'POST',
+      body:JSON.stringify({ recipientName:state.recName, recipientPhone:state.recPhone, mvrAmount:state.mvr, inrAmount:state.inr, exchangeRate:state.rate })
     });
-    document.getElementById('suc-mvr').textContent = 'MVR ' + state.mvr;
-    document.getElementById('suc-inr').textContent = '₹' + state.inr.toLocaleString('en-IN', { maximumFractionDigits: 0 });
-    document.getElementById('suc-sub').textContent = 'Money is on its way to ' + state.recName;
-    document.getElementById('suc-ref').textContent = 'Ref: ' + (data.reference || '#TXN' + Date.now());
+    const ref = data.reference || '#TXN' + Date.now();
+    const sm = document.getElementById('suc-mvr'); if(sm) sm.textContent = 'MVR ' + state.mvr;
+    const si = document.getElementById('suc-inr'); if(si) si.textContent = '₹' + state.inr.toLocaleString('en-IN',{maximumFractionDigits:0});
+    const ss = document.getElementById('suc-sub'); if(ss) ss.textContent = 'Money is on its way to ' + state.recName;
+    const sr = document.getElementById('suc-ref'); if(sr) sr.textContent = 'Ref: ' + ref;
+    addNotification('💸 Transfer Sent!', 'MVR ' + state.mvr + ' sent to ' + state.recName);
     go('success');
+  } catch(e) { showToast('❌ Transfer failed. Try again.'); }
+}
+
+// ── History ───────────────────────────────────────────────────
+async function loadHistory() {
+  const container = document.getElementById('history-list');
+  if (!container) return;
+  try {
+    const data = await apiFetch('/api/transfer/history');
+    if (!Array.isArray(data) || !data.length) {
+      container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:40px;">No transfers yet!</div>';
+      return;
+    }
+    container.innerHTML = data.map(tx => `
+      <div class="tx-card" style="background:var(--card);border-radius:18px;padding:18px;margin-bottom:12px;">
+        <div style="width:48px;height:48px;background:#f0f4ff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;">🇮🇳</div>
+        <div style="flex:1;"><div style="font-weight:700;color:var(--text);font-size:15px;">${tx.recipientName}</div><div style="color:var(--gray);font-size:12px;margin-top:2px;">+91 ${tx.recipientPhone} · ${new Date(tx.createdAt).toLocaleDateString()}</div></div>
+        <div style="text-align:right;"><div style="font-weight:800;color:var(--text);font-size:16px;">MVR ${tx.mvrAmount}</div><div style="background:#f0fdf4;border-radius:8px;padding:3px 10px;margin-top:4px;"><span style="color:var(--green);font-size:12px;font-weight:600;">✓ ${tx.status}</span></div></div>
+      </div>`).join('');
   } catch(e) {
-    showToast('❌ Transfer failed. Try again.');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '✅ &nbsp; Confirm & Send';
+    container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:40px;">Could not load history</div>';
   }
 }
 
 // ── Bank Accounts ─────────────────────────────────────────────
+function switchIndiaTab(tab) {
+  document.getElementById('upi-section').style.display = tab==='upi'?'block':'none';
+  document.getElementById('bank-section').style.display = tab==='bank'?'block':'none';
+  ['upi','bank'].forEach(t => {
+    const btn = document.getElementById(t+'-tab');
+    if(btn) { btn.style.background = t===tab?'#1a3c6e':'var(--card)'; btn.style.color = t===tab?'white':'var(--text)'; btn.style.borderColor = t===tab?'#1a3c6e':'var(--border)'; }
+  });
+}
+
 function saveBMLBank() {
   const bank = document.getElementById('bml-bank').value;
   const acc = document.getElementById('bml-acc').value.trim();
   const name = document.getElementById('bml-name').value.trim();
   if (!acc || !name) { showToast('❌ Fill all fields'); return; }
-  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
-  banks.push({ type: 'MVR', bank, acc, name, flag: '🇲🇻' });
-  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  const banks = JSON.parse(localStorage.getItem('smv_banks') || '[]');
+  banks.push({ type:'MVR', bank, acc, name, flag:'🇲🇻', method:'MVR Bank' });
+  localStorage.setItem('smv_banks', JSON.stringify(banks));
   showToast('✅ Maldives bank saved!');
   loadSavedBanks();
   document.getElementById('bml-acc').value = '';
   document.getElementById('bml-name').value = '';
-}
-
-function switchIndiaTab(tab) {
-  const upiSection = document.getElementById('upi-section');
-  const bankSection = document.getElementById('bank-section');
-  const upiTab = document.getElementById('upi-tab');
-  const bankTab = document.getElementById('bank-tab');
-  if (tab === 'upi') {
-    upiSection.style.display = 'block';
-    bankSection.style.display = 'none';
-    upiTab.style.background = '#1a3c6e';
-    upiTab.style.color = 'white';
-    upiTab.style.borderColor = '#1a3c6e';
-    bankTab.style.background = 'white';
-    bankTab.style.color = '#0f2447';
-    bankTab.style.borderColor = '#e2e8f0';
-  } else {
-    upiSection.style.display = 'none';
-    bankSection.style.display = 'block';
-    bankTab.style.background = '#1a3c6e';
-    bankTab.style.color = 'white';
-    bankTab.style.borderColor = '#1a3c6e';
-    upiTab.style.background = 'white';
-    upiTab.style.color = '#0f2447';
-    upiTab.style.borderColor = '#e2e8f0';
-  }
 }
 
 function saveIndiaUPI() {
@@ -1064,9 +1361,9 @@ function saveIndiaUPI() {
   const name = document.getElementById('india-upi-name').value.trim();
   if (!phone || !name) { showToast('❌ Fill all fields'); return; }
   if (phone.length !== 10) { showToast('❌ Enter valid 10-digit phone'); return; }
-  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
-  banks.push({ type: 'UPI', phone, name, flag: '🇮🇳', method: 'UPI' });
-  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  const banks = JSON.parse(localStorage.getItem('smv_banks') || '[]');
+  banks.push({ type:'INR', phone, name, flag:'🇮🇳', method:'UPI' });
+  localStorage.setItem('smv_banks', JSON.stringify(banks));
   showToast('✅ UPI account saved!');
   loadSavedBanks();
   document.getElementById('india-phone').value = '';
@@ -1075,15 +1372,15 @@ function saveIndiaUPI() {
 
 function saveIndiaBankTransfer() {
   const name = document.getElementById('india-acc-name').value.trim();
-  const bankName = document.getElementById('india-bank-name').value;
-  const accNum = document.getElementById('india-acc-num').value.trim();
+  const bank = document.getElementById('india-bank-name').value;
+  const acc = document.getElementById('india-acc-num').value.trim();
   const ifsc = document.getElementById('india-ifsc').value.trim().toUpperCase();
-  const accType = document.getElementById('india-acc-type').value;
-  if (!name || !accNum || !ifsc) { showToast('❌ Fill all required fields'); return; }
+  const type = document.getElementById('india-acc-type').value;
+  if (!name || !acc || !ifsc) { showToast('❌ Fill all required fields'); return; }
   if (ifsc.length !== 11) { showToast('❌ IFSC must be 11 characters'); return; }
-  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
-  banks.push({ type: 'BANK', name, bankName, accNum, ifsc, accType, flag: '🇮🇳', method: 'Bank Transfer' });
-  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  const banks = JSON.parse(localStorage.getItem('smv_banks') || '[]');
+  banks.push({ type:'INR', name, bank, acc, ifsc, accType:type, flag:'🇮🇳', method:'Bank Transfer' });
+  localStorage.setItem('smv_banks', JSON.stringify(banks));
   showToast('✅ Bank account saved!');
   loadSavedBanks();
   document.getElementById('india-acc-name').value = '';
@@ -1092,31 +1389,43 @@ function saveIndiaBankTransfer() {
 }
 
 function loadSavedBanks() {
-  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
+  const banks = JSON.parse(localStorage.getItem('smv_banks') || '[]');
   const container = document.getElementById('saved-banks');
-  if (!banks.length) {
-    container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:20px;">No accounts saved yet</div>';
-    return;
-  }
-  container.innerHTML = banks.map((b, i) => `
-    <div style="background:white;border-radius:14px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  if (!container) return;
+  if (!banks.length) { container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:20px;">No accounts saved yet</div>'; return; }
+  container.innerHTML = banks.map((b,i) => `
+    <div style="background:var(--card);border-radius:14px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
       <div style="width:44px;height:44px;background:var(--light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;">${b.flag}</div>
       <div style="flex:1;">
-        <div style="font-weight:700;color:var(--navy);font-size:14px;">${b.name}</div>
-        <div style="color:var(--gray);font-size:12px;margin-top:2px;">${b.type === 'MVR' ? b.bank + ' · ' + b.acc : '+91 ' + b.phone + (b.bank ? ' · ' + b.bank : '')}</div>
+        <div style="font-weight:700;color:var(--text);font-size:14px;">${b.name}</div>
+        <div style="color:var(--gray);font-size:12px;margin-top:2px;">${b.method==='UPI'?'📱 UPI · +91 '+b.phone:b.type==='MVR'?'🏦 '+b.bank+' · '+b.acc:'🏦 '+b.bank+' · '+b.acc+' · '+b.ifsc}</div>
+        <div style="display:inline-flex;background:${b.type==='MVR'?'#f0f7ff':'#f0fdf4'};border-radius:6px;padding:2px 8px;margin-top:4px;"><span style="font-size:11px;font-weight:600;color:${b.type==='MVR'?'#1a3c6e':'#059669'};">${b.method||b.type}</span></div>
       </div>
-      <div style="background:#fef2f2;border-radius:8px;padding:4px 10px;cursor:pointer;" onclick="deleteBank(${i})">
-        <span style="color:#ef4444;font-size:12px;">Delete</span>
-      </div>
+      <div style="background:#fef2f2;border-radius:8px;padding:6px 10px;cursor:pointer;" onclick="deleteBank(${i})"><span style="color:#ef4444;font-size:12px;font-weight:600;">Delete</span></div>
     </div>`).join('');
 }
 
 function deleteBank(i) {
-  const banks = JSON.parse(localStorage.getItem('sendmv_banks') || '[]');
-  banks.splice(i, 1);
-  localStorage.setItem('sendmv_banks', JSON.stringify(banks));
+  const banks = JSON.parse(localStorage.getItem('smv_banks') || '[]');
+  banks.splice(i,1);
+  localStorage.setItem('smv_banks', JSON.stringify(banks));
   showToast('🗑️ Account removed');
   loadSavedBanks();
+}
+
+// ── Receipt ───────────────────────────────────────────────────
+function downloadReceipt() {
+  const ref = document.getElementById('suc-ref')?.textContent || '#TXN000000';
+  const mvr = document.getElementById('suc-mvr')?.textContent || 'MVR 0';
+  const inr = document.getElementById('suc-inr')?.textContent || '₹0';
+  const date = new Date().toLocaleString();
+  const receipt = `SENDMV TRANSFER RECEIPT\n${'='.repeat(32)}\n${ref}\nDate: ${date}\n${'-'.repeat(32)}\nFrom: ${state.user?.name||'User'}\nTo: ${state.recName}\nPhone/Account: ${state.recPhone}\n${'-'.repeat(32)}\nAmount Sent: ${mvr}\nAmount Received: ${inr}\nFee: MVR 10\nRate: 1 MVR = ${state.rate.toFixed(2)} INR\nStatus: ✅ Completed\n${'='.repeat(32)}\nPowered by SendMV\nsendmv.onrender.com`;
+  const blob = new Blob([receipt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = ref.replace(/[^A-Z0-9]/gi,'_') + '_receipt.txt';
+  a.click();
+  showToast('📄 Receipt downloaded!');
 }
 
 // ── Dark Mode ─────────────────────────────────────────────────
@@ -1124,21 +1433,19 @@ function toggleDark() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   if (isDark) {
     document.documentElement.removeAttribute('data-theme');
-    document.getElementById('dark-icon').textContent = '🌙';
-    document.getElementById('dark-label').textContent = 'Dark Mode';
-    document.getElementById('dark-toggle').style.background = '#e2e8f0';
-    document.getElementById('dark-thumb').style.left = '2px';
-    localStorage.setItem('sendmv_theme', 'light');
+    const icon = document.getElementById('dark-icon'); if(icon) icon.textContent = '🌙';
+    const label = document.getElementById('dark-label'); if(label) label.textContent = 'Dark Mode';
+    const toggle = document.getElementById('dark-toggle'); if(toggle) toggle.classList.remove('on');
+    localStorage.setItem('smv_theme', 'light');
   } else {
     document.documentElement.setAttribute('data-theme', 'dark');
-    document.getElementById('dark-icon').textContent = '☀️';
-    document.getElementById('dark-label').textContent = 'Light Mode';
-    document.getElementById('dark-toggle').style.background = '#1a3c6e';
-    document.getElementById('dark-thumb').style.left = '22px';
-    localStorage.setItem('sendmv_theme', 'dark');
+    const icon = document.getElementById('dark-icon'); if(icon) icon.textContent = '☀️';
+    const label = document.getElementById('dark-label'); if(label) label.textContent = 'Light Mode';
+    const toggle = document.getElementById('dark-toggle'); if(toggle) toggle.classList.add('on');
+    localStorage.setItem('smv_theme', 'dark');
   }
 }
-if (localStorage.getItem('sendmv_theme') === 'dark') {
+if (localStorage.getItem('smv_theme') === 'dark') {
   document.documentElement.setAttribute('data-theme', 'dark');
 }
 
@@ -1146,101 +1453,57 @@ if (localStorage.getItem('sendmv_theme') === 'dark') {
 function loadReferral() {
   const user = state.user;
   if (!user) return;
-  const code = 'SMV' + (user.phone || user.email || '').slice(-4).toUpperCase().replace(/[^A-Z0-9]/g, '0');
-  document.getElementById('ref-code').textContent = code;
-  const refs = JSON.parse(localStorage.getItem('sendmv_refs') || '[]');
-  document.getElementById('ref-earnings').textContent = 'MVR ' + (refs.length * 20);
-  document.getElementById('ref-count').textContent = refs.length + ' friends referred';
+  const code = 'SMV' + (user.phone||user.email||'USER').replace(/[^A-Z0-9]/gi,'').slice(-4).toUpperCase();
+  const el = document.getElementById('ref-code'); if(el) el.textContent = code;
+  const refs = JSON.parse(localStorage.getItem('smv_refs') || '[]');
+  const earn = document.getElementById('ref-earnings'); if(earn) earn.textContent = 'MVR ' + (refs.length*20);
+  const cnt = document.getElementById('ref-count'); if(cnt) cnt.textContent = refs.length + ' friends referred';
 }
 
 function copyRefCode() {
-  const code = document.getElementById('ref-code').textContent;
-  navigator.clipboard?.writeText(code).catch(() => {});
+  const code = document.getElementById('ref-code')?.textContent || '';
+  navigator.clipboard?.writeText(code).catch(()=>{});
   showToast('✅ Code copied: ' + code);
 }
 
 function shareWhatsApp() {
-  const code = document.getElementById('ref-code').textContent;
-  const msg = `Hey! Use SendMV to send money from Maldives to India instantly! Use my code ${code} to get MVR 10 off your first transfer! 👉 https://sharukg703-art.github.io/Sendmv/sendmv-login.html`;
+  const code = document.getElementById('ref-code')?.textContent || '';
+  const msg = `Hey! Use SendMV to send money from Maldives to India instantly! 🇲🇻→🇮🇳\nUse my code ${code} to get MVR 10 off your first transfer!\n👉 https://sharukg703-art.github.io/Sendmv/sendmv-login.html`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg));
 }
-
 function shareTelegram() {
-  const code = document.getElementById('ref-code').textContent;
-  const msg = `Use SendMV! Code: ${code} for MVR 10 off.`;
-  window.open('https://t.me/share/url?url=https://sharukg703-art.github.io/Sendmv/sendmv-login.html&text=' + encodeURIComponent(msg));
+  const code = document.getElementById('ref-code')?.textContent || '';
+  window.open('https://t.me/share/url?url=' + encodeURIComponent('https://sharukg703-art.github.io/Sendmv/sendmv-login.html') + '&text=' + encodeURIComponent('Use code ' + code + ' for MVR 10 off on SendMV!'));
 }
-
 function shareSMS() {
-  const code = document.getElementById('ref-code').textContent;
-  const msg = `Use SendMV app! Code: ${code} for MVR 10 off. https://sharukg703-art.github.io/Sendmv/sendmv-login.html`;
-  window.open('sms:?body=' + encodeURIComponent(msg));
+  const code = document.getElementById('ref-code')?.textContent || '';
+  window.open('sms:?body=' + encodeURIComponent('Use SendMV! Code: ' + code + ' for MVR 10 off. https://sharukg703-art.github.io/Sendmv/sendmv-login.html'));
 }
-
 function shareLink() {
-  navigator.clipboard?.writeText('https://sharukg703-art.github.io/Sendmv/sendmv-login.html').catch(() => {});
+  navigator.clipboard?.writeText('https://sharukg703-art.github.io/Sendmv/sendmv-login.html').catch(()=>{});
   showToast('🔗 Link copied!');
 }
 
-// ── Receipt Download ──────────────────────────────────────────
-function downloadReceipt() {
-  const ref = document.getElementById('suc-ref').textContent;
-  const mvr = document.getElementById('suc-mvr').textContent;
-  const inr = document.getElementById('suc-inr').textContent;
-  const date = new Date().toLocaleString();
-  const receipt = `SENDMV TRANSFER RECEIPT\n${'='.repeat(30)}\n${ref}\nDate: ${date}\n${'-'.repeat(30)}\nFrom: ${state.user?.name || 'User'}\nTo: ${state.recName}\nPhone: +91 ${state.recPhone}\n${'-'.repeat(30)}\nAmount Sent: ${mvr}\nAmount Received: ${inr}\nFee: MVR 10\nRate: 1 MVR = ${state.rate.toFixed(2)} INR\nStatus: Completed\n${'='.repeat(30)}\nPowered by SendMV`;
-  const blob = new Blob([receipt], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = ref + '-receipt.txt';
-  a.click();
-  showToast('📄 Receipt downloaded!');
+// ── Security ──────────────────────────────────────────────────
+function toggleHideBal() {
+  const toggle = document.getElementById('hide-bal-toggle');
+  const thumb = document.getElementById('hide-bal-thumb');
+  const isOn = toggle?.classList.contains('on');
+  if (isOn) { toggle?.classList.remove('on'); showToast('👁️ Balance visible'); }
+  else { toggle?.classList.add('on'); showToast('🙈 Balance hidden'); }
 }
 
-// ── Security: Auto logout ─────────────────────────────────────
+// Auto logout 30 min
 let inactivityTimer;
 function resetTimer() {
   clearTimeout(inactivityTimer);
   inactivityTimer = setTimeout(() => {
-    if (state.token) {
-      showToast('⏱️ Session expired. Login again.');
-      setTimeout(doLogout, 2000);
-    }
-  }, 30 * 60 * 1000); // 30 minutes
+    if (state.token) { showToast('⏱️ Session expired'); setTimeout(doLogout, 2000); }
+  }, 30 * 60 * 1000);
 }
 document.addEventListener('touchstart', resetTimer);
 document.addEventListener('click', resetTimer);
 resetTimer();
-
-// go() is already defined above with all screen handling
-
-// ── History ───────────────────────────────────────────────────
-async function loadHistory() {
-  const container = document.getElementById('history-list');
-  try {
-    const data = await apiFetch('/api/transfer/history');
-    if (!data.length) {
-      container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:40px;">No transfers yet!</div>';
-      return;
-    }
-    container.innerHTML = data.map(tx => `
-      <div class="tx-card" style="background:white;border-radius:18px;padding:18px;margin-bottom:12px;">
-        <div class="tx-flag">🇮🇳</div>
-        <div style="flex:1;">
-          <div class="tx-name">${tx.recipientName}</div>
-          <div class="tx-date">+91 ${tx.recipientPhone} · ${new Date(tx.createdAt).toLocaleDateString()}</div>
-        </div>
-        <div class="tx-amount">
-          <div class="tx-mvr">MVR ${tx.mvrAmount}</div>
-          <div style="background:#f0fdf4;border-radius:8px;padding:3px 10px;margin-top:4px;">
-            <span style="color:var(--green);font-size:12px;font-weight:600;">✓ ${tx.status}</span>
-          </div>
-        </div>
-      </div>`).join('');
-  } catch(e) {
-    container.innerHTML = '<div style="text-align:center;color:var(--gray);padding:40px;">Could not load history</div>';
-  }
-}
 </script>
 </body>
 </html>
