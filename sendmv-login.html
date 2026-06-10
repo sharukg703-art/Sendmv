@@ -472,18 +472,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);display:flex;justify-
 <!-- SUCCESS -->
 <div class="screen" id="success">
   <div class="suc-icon">✅</div>
-  <p style="font-size:26px;font-weight:800;color:var(--text)" id="suc-t">Transfer Sent!</p>
-  <p style="color:var(--gray);font-size:15px;margin-top:8px;text-align:center" id="suc-s">Money is on its way!</p>
-  <div style="background:var(--light);border-radius:20px;padding:24px;width:100%;border:1.5px solid var(--border);margin:24px 0">
+  <p style="font-size:26px;font-weight:800;color:var(--text)" id="suc-t">Transfer Submitted!</p>
+  <p style="color:var(--gray);font-size:14px;margin-top:8px;text-align:center" id="suc-s">Processing by SendMV team</p>
+  <div style="background:var(--light);border-radius:20px;padding:24px;width:100%;border:1.5px solid var(--border);margin:20px 0">
     <div style="display:flex;justify-content:space-between;margin-bottom:16px">
       <div><p style="color:var(--gray);font-size:12px">You sent</p><p style="font-weight:800;font-size:22px;color:var(--text)" id="suc-mvr">MVR 0</p></div>
       <span style="font-size:24px;color:var(--gray)">→</span>
       <div style="text-align:right"><p style="color:var(--gray);font-size:12px">They get</p><p style="font-weight:800;font-size:22px;color:var(--green)" id="suc-to">0</p></div>
     </div>
-    <div style="background:#f0fdf4;border-radius:10px;padding:10px;text-align:center"><p style="color:var(--green);font-size:13px;font-weight:600" id="suc-eta">⚡ Expected: ~30 minutes</p></div>
+    <div style="background:#fef9c3;border-radius:10px;padding:12px;text-align:center;margin-bottom:12px">
+      <p style="color:#92400e;font-size:13px;font-weight:600" id="suc-eta">⏳ Processing: 30-60 minutes</p>
+    </div>
+    <div style="background:#f0f9ff;border-radius:10px;padding:12px">
+      <p style="color:#0369a1;font-size:13px;font-weight:600">📋 Next Steps:</p>
+      <p style="color:#0369a1;font-size:12px;margin-top:6px">1. Pay MVR to SendMV agent<br>2. Agent processes your transfer<br>3. Recipient gets money in 30-60 min<br>4. You'll get WhatsApp confirmation</p>
+    </div>
   </div>
-  <p style="color:var(--gray);font-size:13px;margin-bottom:24px" id="suc-ref">Ref: #TXN000000</p>
+  <p style="color:var(--gray);font-size:13px;margin-bottom:8px" id="suc-ref">Ref: #SMV000000</p>
+  <p style="color:var(--gray);font-size:12px;margin-bottom:20px;text-align:center">📱 WhatsApp opened to notify SendMV team</p>
   <button class="btn btn-primary" style="width:100%" onclick="go('home')">Back to Home</button>
+  <button class="btn btn-outline mt16" style="width:100%" onclick="contactAgent()">📞 Contact Agent</button>
   <button class="btn btn-outline mt16" style="width:100%" onclick="dlReceipt()">📄 Download Receipt</button>
 </div>
 
@@ -843,16 +851,65 @@ function goConfirm(){
   set('conf-rate',S.mode==='local'?'Local MVR':`1 MVR = ${(S.rate[S.toCurr]||1).toFixed(4)} ${S.toCurr}`);
   set('conf-fee',fee);set('conf-time',time);S.pCV='';updPD('cdots','cp','');go('confirm');
 }
+// YOUR WHATSAPP NUMBER - Change this to your number!
+const AGENT_WHATSAPP = '9607369662';
+
 async function doTransfer(){
+  const ref='SMV'+Date.now().toString().slice(-8);
+  const sym=SYM[S.toCurr]||'';
+  const toStr=sym+S.to.toLocaleString('en-IN',{maximumFractionDigits:2})+' '+S.toCurr;
+  const fee=S.mode==='local'?0:S.mode==='international'?20:10;
+  const total=S.mvr+fee;
+
+  // Save to backend
   try{
-    const d=await api('/api/transfer/create',{method:'POST',body:JSON.stringify({recipientName:S.recName,recipientPhone:S.recPhone,mvrAmount:S.mvr,inrAmount:S.to,exchangeRate:S.rate[S.toCurr]||S.rate.INR,transferType:S.mode})});
-    const ref=d.reference||'#TXN'+Date.now();
-    const sym=SYM[S.toCurr]||'';const toStr=sym+S.to.toLocaleString('en-IN',{maximumFractionDigits:2})+' '+S.toCurr;
-    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
-    set('suc-mvr','MVR '+S.mvr);set('suc-to',toStr);set('suc-s','Sent to '+S.recName);set('suc-ref','Ref: '+ref);
-    set('suc-eta',S.mode==='local'?'⚡ Instant!':S.mode==='international'?'📅 1-3 business days':'⚡ ~30 minutes');
-    addNotif('💸 Transfer Sent!','MVR '+S.mvr+' → '+S.recName+' ('+ref+')');go('success');
-  }catch(e){showToast('❌ Transfer failed. Try again.')}
+    await api('/api/transfer/create',{method:'POST',body:JSON.stringify({
+      recipientName:S.recName,recipientPhone:S.recPhone,
+      mvrAmount:S.mvr,inrAmount:S.to,
+      exchangeRate:S.rate[S.toCurr]||S.rate.INR,
+      transferType:S.mode,reference:ref,status:'processing'
+    })});
+  }catch(e){console.log('Backend offline, continuing...')}
+
+  // Build WhatsApp message to YOU (agent)
+  const waMsg=`🔔 NEW SENDMV TRANSFER REQUEST\n\n`+
+    `📋 Ref: ${ref}\n`+
+    `👤 From: ${S.user?.name||'Customer'}\n`+
+    `📱 Phone: ${S.user?.phone||S.user?.email||'N/A'}\n\n`+
+    `💸 Amount: MVR ${S.mvr}\n`+
+    `💱 Rate: 1 MVR = ${(S.rate[S.toCurr]||1).toFixed(4)} ${S.toCurr}\n`+
+    `🏷️ Fee: MVR ${fee}\n`+
+    `💰 Total to collect: MVR ${total}\n\n`+
+    `📤 Send to:\n`+
+    `👤 Name: ${S.recName}\n`+
+    `📱 Account: ${S.recPhone}\n`+
+    `💱 Amount to send: ${toStr}\n`+
+    `🌍 Type: ${S.mode.toUpperCase()}\n\n`+
+    `⏰ ${new Date().toLocaleString()}\n`+
+    `Please process and confirm! ✅`;
+
+  // Update success screen
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  set('suc-mvr','MVR '+S.mvr);
+  set('suc-to',toStr);
+  set('suc-s','Transfer submitted — processing by SendMV team');
+  set('suc-ref','Ref: '+ref);
+  set('suc-eta','⏳ Processing: 30-60 minutes');
+  set('suc-t','Transfer Submitted! ✅');
+
+  // Store transfer locally
+  const txns=JSON.parse(localStorage.getItem('smv_txns')||'[]');
+  txns.unshift({ref,recName:S.recName,recPhone:S.recPhone,mvr:S.mvr,to:S.to,curr:S.toCurr,mode:S.mode,status:'processing',date:new Date().toISOString()});
+  localStorage.setItem('smv_txns',JSON.stringify(txns));
+
+  addNotif('📤 Transfer Submitted','MVR '+S.mvr+' to '+S.recName+' — Ref: '+ref);
+
+  // Open WhatsApp to notify agent
+  setTimeout(()=>{
+    window.open('https://wa.me/'+AGENT_WHATSAPP+'?text='+encodeURIComponent(waMsg));
+  },1500);
+
+  go('success');
 }
 async function loadHistory(){
   const c=document.getElementById('history-list');if(!c)return;
@@ -906,6 +963,10 @@ function shareWA(){const c=document.getElementById('ref-code')?.textContent||'';
 function shareTG(){const c=document.getElementById('ref-code')?.textContent||'';window.open('https://t.me/share/url?url='+encodeURIComponent(APP)+'&text='+encodeURIComponent('Use code '+c+' on SendMV!'))}
 function shareSMS(){const c=document.getElementById('ref-code')?.textContent||'';window.open('sms:?body='+encodeURIComponent('Use SendMV! Code '+c+' for MVR 10 off. '+APP))}
 function shareLink(){navigator.clipboard?.writeText(APP).catch(()=>{});showToast('🔗 App link copied!')}
+function contactAgent(){
+  const msg='Hi SendMV! I submitted a transfer and need help.\nRef: '+( document.getElementById('suc-ref')?.textContent||'N/A');
+  window.open('https://wa.me/'+AGENT_WHATSAPP+'?text='+encodeURIComponent(msg));
+}
 function toggleHideBal(){const t=document.getElementById('hb-tog');if(t){const on=t.classList.contains('on');t.classList.toggle('on');showToast(on?'👁️ Balance visible':'🙈 Balance hidden')}}
 let _tmr;
 function resetTimer(){clearTimeout(_tmr);_tmr=setTimeout(()=>{if(S.token){showToast('⏱️ Session expired');setTimeout(doLogout,2000)}},30*60*1000)}
