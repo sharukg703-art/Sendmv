@@ -234,4 +234,863 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);display:flex;justify-
     <div class="numpad" style="max-width:280px;margin:0 auto">
       <button class="nk" onclick="pinIn('1','set')">1</button><button class="nk" onclick="pinIn('2','set')">2</button><button class="nk" onclick="pinIn('3','set')">3</button>
       <button class="nk" onclick="pinIn('4','set')">4</button><button class="nk" onclick="pinIn('5','set')">5</button><button class="nk" onclick="pinIn('6','set')">6</button>
-      <button class="nk" onclick="pinIn('7','set')">7</button><button class="nk" onclick="pinIn('8','set')">8</button><button class
+      <button class="nk" onclick="pinIn('7','set')">7</button><button class="nk" onclick="pinIn('8','set')">8</button><button class="nk" onclick="pinIn('9','set')">9</button>
+      <button class="nk empty"></button><button class="nk" onclick="pinIn('0','set')">0</button><button class="nk" onclick="pinDel('set')">⌫</button>
+    </div>
+    <p style="color:var(--gray);font-size:12px;margin-top:16px">You'll use this PIN to confirm every transfer</p>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="login">
+  <div class="ph"><button class="back" onclick="go('welcome')">←</button><div class="pt" id="li-t">Welcome Back 👋</div><div class="ps" id="li-s">Login to SendMV</div></div>
+  <div class="pb">
+    <div class="fg"><label class="fl" id="l-id">Phone or Email</label><input type="text" class="fi" id="li-id" placeholder="+960 7xx xxxx or email"></div>
+    <div class="fg"><label class="fl" id="l-pd">Password</label><input type="password" class="fi" id="li-pass" placeholder="Your password"></div>
+    <p style="text-align:right;margin-bottom:20px"><span class="lnk" style="font-size:13px" onclick="showToast('Reset link sent! 📧')">Forgot password?</span></p>
+    <button class="btn btn-primary" id="li-btn" onclick="doLogin()">Login →</button>
+    <div class="divider"><span>or</span></div>
+    <button class="btn btn-outline" onclick="go('signup')" id="btn-new">Create New Account</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen" id="home">
+  <div class="home-hero">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div><div style="color:rgba(255,255,255,0.7);font-size:13px" id="h-greet">Good morning 👋</div><div style="color:#fff;font-size:20px;font-weight:700" id="home-name">User</div></div>
+      <div style="position:relative;cursor:pointer" onclick="go('notifications')">
+        <div style="width:42px;height:42px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid rgba(255,255,255,0.2)">🔔</div>
+        <div class="nbadge" id="nbadge">0</div>
+      </div>
+    </div>
+    <div class="rate-card">
+      <div style="color:rgba(255,255,255,0.65);font-size:12px" id="h-rl">Today's Rates</div>
+      <div style="color:#fff;font-size:24px;font-weight:800;margin-top:4px" id="home-rate">1 MVR = 4.82 INR</div>
+      <div style="display:flex;gap:10px;margin-top:8px;overflow-x:auto;padding-bottom:2px">
+        <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:5px 10px;white-space:nowrap"><span style="color:rgba(255,255,255,0.6);font-size:11px">USD </span><span style="color:#86efac;font-size:12px;font-weight:700" id="h-usd">0.065</span></div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:5px 10px;white-space:nowrap"><span style="color:rgba(255,255,255,0.6);font-size:11px">GBP </span><span style="color:#86efac;font-size:12px;font-weight:700" id="h-gbp">0.051</span></div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:5px 10px;white-space:nowrap"><span style="color:rgba(255,255,255,0.6);font-size:11px">AED </span><span style="color:#86efac;font-size:12px;font-weight:700" id="h-aed">0.24</span></div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:5px 10px;white-space:nowrap"><span style="color:rgba(255,255,255,0.6);font-size:11px">SGD </span><span style="color:#86efac;font-size:12px;font-weight:700" id="h-sgd">0.088</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="home-body with-nav">
+    <div style="background:var(--card);border-radius:20px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      <button style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:12px;border:none;background:none;font-family:inherit" onclick="go('transfer-select')"><span style="font-size:24px">💸</span><span style="font-size:11px;font-weight:600;color:var(--text)" id="q-send">Send</span></button>
+      <button style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:12px;border:none;background:none;font-family:inherit" onclick="go('qrscan')"><span style="font-size:24px">📷</span><span style="font-size:11px;font-weight:600;color:var(--text)" id="q-qr">QR</span></button>
+      <button style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:12px;border:none;background:none;font-family:inherit" onclick="go('rates')"><span style="font-size:24px">📊</span><span style="font-size:11px;font-weight:600;color:var(--text)" id="q-rates">Rates</span></button>
+      <button style="display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px 4px;border-radius:12px;border:none;background:none;font-family:inherit" onclick="go('history')"><span style="font-size:24px">📋</span><span style="font-size:11px;font-weight:600;color:var(--text)" id="q-hist">History</span></button>
+    </div>
+    <button class="btn btn-primary" style="margin-bottom:20px" onclick="go('transfer-select')" id="h-send-btn">💸 &nbsp; Send Money Now</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:16px;font-weight:700;color:var(--text)" id="h-recent">Recent Transfers</div>
+      <div class="lnk" style="font-size:13px" onclick="go('history')">See all</div>
+    </div>
+    <div id="home-txns"><div style="text-align:center;color:var(--gray);padding:20px">Loading...</div></div>
+  </div>
+</div>
+
+<!-- TRANSFER SELECT -->
+<div class="screen" id="transfer-select">
+  <div class="ph"><button class="back" onclick="go('home')">←</button><div class="pt" id="ts-t">Send Money</div><div class="ps" id="ts-s">Choose transfer type</div></div>
+  <div class="pb with-nav">
+    <div class="ttc ttc-local" onclick="startTransfer('local')">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div style="width:52px;height:52px;background:#0891b2;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px">🇲🇻</div>
+        <div><div style="font-size:17px;font-weight:800;color:#0c4a6e" id="ts-local">Local Transfer</div><div style="font-size:13px;color:#0369a1" id="ts-locals">Send within Maldives</div></div>
+        <div class="ttc-badge" style="background:#0891b2" id="ts-lf">Free</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(8,145,178,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#0369a1">🏦 BML</span>
+        <span style="background:rgba(8,145,178,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#0369a1">🏦 MIB</span>
+        <span style="background:rgba(8,145,178,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#0369a1">📱 Dhiraagu Pay</span>
+        <span style="background:rgba(8,145,178,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#0369a1">📱 Ooredoo Money</span>
+      </div>
+    </div>
+    <div class="ttc ttc-india" onclick="startTransfer('india')">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div style="width:52px;height:52px;background:#f97316;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px">🇮🇳</div>
+        <div><div style="font-size:17px;font-weight:800;color:#7c2d12" id="ts-india">India Transfer</div><div style="font-size:13px;color:#c2410c" id="ts-indias">MVR → INR in 30 min</div></div>
+        <div class="ttc-badge" style="background:#f97316" id="ts-if">MVR 10</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(249,115,22,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#c2410c">📱 UPI</span>
+        <span style="background:rgba(249,115,22,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#c2410c">🏦 IMPS/NEFT</span>
+        <span style="background:rgba(249,115,22,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#c2410c">All 40+ Banks</span>
+      </div>
+    </div>
+    <div class="ttc ttc-intl" onclick="startTransfer('international')">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div style="width:52px;height:52px;background:#7c3aed;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px">🌍</div>
+        <div><div style="font-size:17px;font-weight:800;color:#4c1d95" id="ts-intl">International</div><div style="font-size:13px;color:#6d28d9" id="ts-intls">150+ countries</div></div>
+        <div class="ttc-badge" style="background:#7c3aed" id="ts-intf">1-3 days</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(124,58,237,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#6d28d9">🌐 SWIFT</span>
+        <span style="background:rgba(124,58,237,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#6d28d9">💳 Wire</span>
+        <span style="background:rgba(124,58,237,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#6d28d9">USD·GBP·AED·EUR</span>
+      </div>
+    </div>
+
+    <!-- USD → INR Card -->
+    <div style="border-radius:20px;padding:24px;margin-bottom:16px;cursor:pointer;transition:all 0.2s;border:2px solid #16a34a;background:linear-gradient(135deg,#f0fdf4,#dcfce7);position:relative" onclick="startTransfer('usd-india')">
+      <div style="position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;background:#16a34a">MVR 15</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div style="width:52px;height:52px;background:#16a34a;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px">💵🇮🇳</div>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#14532d">USD → INR</div>
+          <div style="font-size:13px;color:#15803d">Dollar to India in 30-60 min</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(22,163,74,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#15803d">💵 USD Cash</span>
+        <span style="background:rgba(22,163,74,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#15803d">🏦 USD Bank</span>
+        <span style="background:rgba(22,163,74,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#15803d">📱 UPI</span>
+        <span style="background:rgba(22,163,74,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#15803d">🏦 Bank Transfer</span>
+      </div>
+    </div>
+
+    <!-- Crypto Bridge Card -->
+    <div style="border-radius:20px;padding:24px;margin-bottom:16px;cursor:pointer;transition:all 0.2s;border:2px solid #d97706;background:linear-gradient(135deg,#fffbeb,#fef3c7);position:relative" onclick="startTransfer('crypto')">
+      <div style="position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;color:#fff;background:#d97706">1%</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <div style="width:52px;height:52px;background:#d97706;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px">₿</div>
+        <div>
+          <div style="font-size:17px;font-weight:800;color:#78350f">Crypto Bridge</div>
+          <div style="font-size:13px;color:#92400e">USDT/BTC → INR fastest</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(217,119,6,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#92400e">₿ Bitcoin</span>
+        <span style="background:rgba(217,119,6,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#92400e">💲 USDT</span>
+        <span style="background:rgba(217,119,6,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#92400e">⚡ Fastest</span>
+        <span style="background:rgba(217,119,6,0.15);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;color:#92400e">Lowest Fee</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEND -->
+<div class="screen" id="send">
+  <div class="ph"><button class="back" onclick="go('transfer-select')">←</button><div class="pt" id="s-t">Send Money</div><div class="ps" id="s-s">Enter amount</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div class="steps" style="margin-bottom:20px"><div class="step done">✓</div><div class="step-line done"></div><div class="step active">1</div><div class="step-line"></div><div class="step">2</div><div class="step-line"></div><div class="step">3</div></div>
+    <div id="india-tabs" style="display:none;gap:8px;margin-bottom:16px">
+      <button id="tab-upi" onclick="setMethod('upi')" style="flex:1;padding:11px;border-radius:12px;border:2px solid #1a3c6e;background:#1a3c6e;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📱 UPI</button>
+      <button id="tab-imps" onclick="setMethod('imps')" style="flex:1;padding:11px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🏦 IMPS/NEFT</button>
+      <button id="tab-qr" onclick="openQR()" style="flex:1;padding:11px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📷 QR</button>
+    </div>
+    <div id="intl-curr-sel" style="display:none;margin-bottom:16px">
+      <label class="fl">Destination Currency</label>
+      <select class="fi" id="intl-curr" onchange="calcTo()">
+        <option value="INR">🇮🇳 INR - Indian Rupee</option>
+        <option value="USD">🇺🇸 USD - US Dollar</option>
+        <option value="GBP">🇬🇧 GBP - British Pound</option>
+        <option value="EUR">🇪🇺 EUR - Euro</option>
+        <option value="AED">🇦🇪 AED - UAE Dirham</option>
+        <option value="SGD">🇸🇬 SGD - Singapore Dollar</option>
+        <option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+        <option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+        <option value="MYR">🇲🇾 MYR - Malaysian Ringgit</option>
+        <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+        <option value="LKR">🇱🇰 LKR - Sri Lankan Rupee</option>
+        <option value="BDT">🇧🇩 BDT - Bangladeshi Taka</option>
+      </select>
+    </div>
+    <div id="local-from" style="display:none;margin-bottom:16px">
+      <label class="fl">From Bank / Wallet</label>
+      <select class="fi" id="local-from-bank"><option>Bank of Maldives (BML)</option><option>Maldives Islamic Bank (MIB)</option><option>STO</option><option>Dhiraagu Pay</option><option>Ooredoo Money</option><option>MIFCO</option></select>
+    </div>
+    <div id="usd-source" style="display:none;margin-bottom:16px">
+      <label class="fl">USD Source</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button onclick="setUSDSource('cash')" id="usrc-cash" style="padding:12px;border-radius:12px;border:2px solid #16a34a;background:#16a34a;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">💵 USD Cash</button>
+        <button onclick="setUSDSource('bank')" id="usrc-bank" style="padding:12px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🏦 USD Bank</button>
+      </div>
+    </div>
+    <div id="crypto-source" style="display:none;margin-bottom:16px">
+      <label class="fl">Crypto Type</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button onclick="setCrypto('usdt')" id="cry-usdt" style="padding:12px;border-radius:12px;border:2px solid #d97706;background:#d97706;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">💲 USDT</button>
+        <button onclick="setCrypto('btc')" id="cry-btc" style="padding:12px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">₿ Bitcoin</button>
+      </div>
+      <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:10px">
+        <p style="color:#92400e;font-size:12px">⚠️ Send crypto to our wallet address after submitting. You'll receive the address on WhatsApp.</p>
+      </div>
+    </div>
+    <div class="ab ab-s">
+      <div style="color:var(--gray);font-size:13px;margin-bottom:10px" id="s-send">You send</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="cb" style="background:#0f2447" id="from-badge">MVR 🇲🇻</div>
+        <input type="number" class="ai" id="mvr-in" placeholder="0" oninput="calcTo()">
+      </div>
+    </div>
+    <div style="text-align:center;font-size:22px;color:var(--accent);margin:4px 0">⇅</div>
+    <div class="ab ab-r">
+      <div style="color:var(--gray);font-size:13px;margin-bottom:10px" id="s-gets">Recipient gets</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="cb" style="background:#f97316" id="to-badge">INR 🇮🇳</div>
+        <div style="flex:1;font-size:32px;font-weight:800;color:var(--text);text-align:right" id="to-out">0</div>
+      </div>
+    </div>
+    <div class="fee-tbl" id="fee-tbl" style="display:none">
+      <div class="fee-row"><span style="color:var(--gray);font-size:13px">Rate</span><span style="color:var(--text);font-size:13px;font-weight:600" id="fee-rate">1 MVR = 4.82 INR</span></div>
+      <div class="fee-row"><span style="color:var(--gray);font-size:13px">Fee</span><span style="color:var(--text);font-size:13px;font-weight:600" id="fee-amt">MVR 10</span></div>
+      <div class="fee-row"><span style="color:var(--gray);font-size:13px">Total</span><span style="color:var(--text);font-size:13px;font-weight:600" id="fee-total">MVR 0</span></div>
+      <div class="fee-row"><span style="color:var(--gray);font-size:13px">Arrives</span><span style="color:var(--text);font-size:13px;font-weight:600" id="fee-time">~30 min</span></div>
+    </div>
+    <button class="btn btn-primary mt24" id="send-btn" onclick="goRecipient()" style="opacity:0.5">Continue →</button>
+  </div>
+</div>
+
+<!-- RECIPIENT -->
+<div class="screen" id="recipient">
+  <div class="ph"><button class="back" onclick="go('send')">←</button><div class="pt" id="r-t">Recipient Details</div><div class="ps" id="r-s">Who are you sending to?</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div class="steps" style="margin-bottom:20px"><div class="step done">✓</div><div class="step-line done"></div><div class="step done">✓</div><div class="step-line done"></div><div class="step active">2</div><div class="step-line"></div><div class="step">3</div></div>
+    <div style="background:#f0f7ff;border-radius:16px;padding:16px;display:flex;justify-content:space-between;margin-bottom:20px;border:1.5px solid #dbeafe">
+      <div><p style="color:var(--gray);font-size:12px">Sending</p><p style="color:var(--text);font-weight:800;font-size:18px" id="rec-mvr">MVR 0</p></div>
+      <span style="color:var(--gray);font-size:20px">→</span>
+      <div style="text-align:right"><p style="color:var(--gray);font-size:12px">Gets</p><p style="color:var(--text);font-weight:800;font-size:18px" id="rec-to">0</p></div>
+    </div>
+    <!-- LOCAL -->
+    <div id="rec-local">
+      <div class="fg"><label class="fl">Recipient Name</label><input type="text" class="fi" id="rec-nm-local" placeholder="Full name"></div>
+      <div class="fg"><label class="fl">To Bank / Wallet</label><select class="fi" id="rec-local-bank"><option>Bank of Maldives (BML)</option><option>Maldives Islamic Bank (MIB)</option><option>STO</option><option>Dhiraagu Pay</option><option>Ooredoo Money</option><option>MIFCO</option></select></div>
+      <div class="fg"><label class="fl">Account Number / Phone</label><input type="tel" class="fi" id="rec-local-acc" placeholder="Account or phone number"></div>
+    </div>
+    <!-- UPI -->
+    <div id="rec-upi" style="display:none">
+      <div class="fg"><label class="fl">Recipient Name</label><input type="text" class="fi" id="rec-nm-upi" placeholder="Full name"></div>
+      <div class="fg"><label class="fl">Indian Phone (UPI)</label><div class="pr"><div class="pc">🇮🇳 +91</div><input type="tel" class="pi" id="rec-phone" placeholder="98765 43210" maxlength="10"></div><p style="color:var(--gray);font-size:12px;margin-top:6px">💡 Works with any UPI-linked phone</p></div>
+    </div>
+    <!-- BANK -->
+    <div id="rec-bank" style="display:none">
+      <div class="fg"><label class="fl">Account Holder Name</label><input type="text" class="fi" id="rec-bank-nm" placeholder="Full name as in bank"></div>
+      <div class="fg"><label class="fl">Indian Bank</label><select class="fi" id="rec-bank-sel"><option>State Bank of India (SBI)</option><option>HDFC Bank</option><option>ICICI Bank</option><option>Axis Bank</option><option>Punjab National Bank</option><option>Bank of Baroda</option><option>Canara Bank</option><option>Kotak Mahindra Bank</option><option>Union Bank of India</option><option>IndusInd Bank</option><option>Yes Bank</option><option>Federal Bank</option><option>South Indian Bank</option><option>Karnataka Bank</option><option>Bandhan Bank</option><option>IDFC First Bank</option><option>Other</option></select></div>
+      <div class="fg"><label class="fl">Account Number</label><input type="tel" class="fi" id="rec-acc" placeholder="1234567890123456"></div>
+      <div class="fg"><label class="fl">IFSC Code</label><input type="text" class="fi" id="rec-ifsc" placeholder="SBIN0001234" style="text-transform:uppercase"></div>
+      <div class="fg"><label class="fl">Account Type</label><select class="fi" id="rec-acc-type"><option>Savings Account</option><option>Current Account</option></select></div>
+    </div>
+    <!-- INTERNATIONAL -->
+    <div id="rec-intl" style="display:none">
+      <div class="fg"><label class="fl">Recipient Full Name</label><input type="text" class="fi" id="rec-intl-nm" placeholder="Full legal name"></div>
+      <div class="fg"><label class="fl">Country</label><select class="fi" id="rec-intl-country"><option>🇺🇸 United States</option><option>🇬🇧 United Kingdom</option><option>🇦🇪 UAE</option><option>🇸🇬 Singapore</option><option>🇦🇺 Australia</option><option>🇨🇦 Canada</option><option>🇪🇺 Europe (SEPA)</option><option>🇸🇦 Saudi Arabia</option><option>🇲🇾 Malaysia</option><option>🇱🇰 Sri Lanka</option><option>🇧🇩 Bangladesh</option><option>🇵🇰 Pakistan</option><option>🇵🇭 Philippines</option><option>🇳🇵 Nepal</option><option>Other</option></select></div>
+      <div class="fg"><label class="fl">Bank Name</label><input type="text" class="fi" id="rec-intl-bank" placeholder="Recipient bank name"></div>
+      <div class="fg"><label class="fl">IBAN / Account Number</label><input type="text" class="fi" id="rec-intl-iban" placeholder="IBAN or account number"></div>
+      <div class="fg"><label class="fl">SWIFT / BIC Code</label><input type="text" class="fi" id="rec-intl-swift" placeholder="e.g. CHASUS33" style="text-transform:uppercase"></div>
+      <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:12px;margin-bottom:16px"><p style="color:#92400e;font-size:12px">⚠️ Delivery: 1-3 business days. Correspondent bank fees may apply.</p></div>
+    </div>
+    <div id="saved-recs" style="margin-top:8px"></div>
+    <button class="btn btn-primary mt24" onclick="goConfirm()">Review Transfer →</button>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="screen" id="confirm">
+  <div class="ph"><button class="back" onclick="go('recipient')">←</button><div class="pt">Confirm Transfer</div><div class="ps">Review & enter PIN</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div class="steps" style="margin-bottom:20px"><div class="step done">✓</div><div class="step-line done"></div><div class="step done">✓</div><div class="step-line done"></div><div class="step done">✓</div><div class="step-line done"></div><div class="step active">3</div></div>
+    <div class="conf-hero">
+      <p style="color:rgba(255,255,255,0.7);font-size:13px">You're sending</p>
+      <p style="color:#fff;font-size:42px;font-weight:800;margin-top:4px" id="conf-mvr">MVR 0</p>
+      <p style="color:rgba(255,255,255,0.4);font-size:24px;margin:8px 0">↓</p>
+      <p style="color:rgba(255,255,255,0.7);font-size:13px">Recipient gets</p>
+      <p style="color:#86efac;font-size:34px;font-weight:800;margin-top:4px" id="conf-to">0</p>
+    </div>
+    <div class="det-card">
+      <div class="det-row"><span style="color:var(--gray);font-size:14px">👤 Recipient</span><span style="color:var(--text);font-weight:600;font-size:14px;max-width:55%;text-align:right" id="conf-nm">—</span></div>
+      <div class="det-row"><span style="color:var(--gray);font-size:14px">🏷️ Type</span><span style="color:var(--text);font-weight:600;font-size:14px" id="conf-type">—</span></div>
+      <div class="det-row"><span style="color:var(--gray);font-size:14px">📋 Details</span><span style="color:var(--text);font-weight:600;font-size:13px;max-width:55%;text-align:right" id="conf-det">—</span></div>
+      <div class="det-row"><span style="color:var(--gray);font-size:14px">💱 Rate</span><span style="color:var(--text);font-weight:600;font-size:14px" id="conf-rate">—</span></div>
+      <div class="det-row"><span style="color:var(--gray);font-size:14px">🏷️ Fee</span><span style="color:var(--text);font-weight:600;font-size:14px" id="conf-fee">MVR 10</span></div>
+      <div class="det-row"><span style="color:var(--gray);font-size:14px">⚡ Arrival</span><span style="color:var(--text);font-weight:600;font-size:14px" id="conf-time">—</span></div>
+    </div>
+    <div style="background:var(--light);border-radius:16px;padding:20px;margin-top:16px;text-align:center">
+      <p style="color:var(--text);font-weight:700;font-size:15px;margin-bottom:4px">🔐 Enter Transaction PIN</p>
+      <p style="color:var(--gray);font-size:13px;margin-bottom:16px">Confirm with your 4-digit PIN</p>
+      <div class="pin-wrap" id="cdots"><div class="pin-dot" id="cp0"></div><div class="pin-dot" id="cp1"></div><div class="pin-dot" id="cp2"></div><div class="pin-dot" id="cp3"></div></div>
+      <div class="numpad" style="max-width:280px;margin:0 auto">
+        <button class="nk" onclick="pinIn('1','confirm')">1</button><button class="nk" onclick="pinIn('2','confirm')">2</button><button class="nk" onclick="pinIn('3','confirm')">3</button>
+        <button class="nk" onclick="pinIn('4','confirm')">4</button><button class="nk" onclick="pinIn('5','confirm')">5</button><button class="nk" onclick="pinIn('6','confirm')">6</button>
+        <button class="nk" onclick="pinIn('7','confirm')">7</button><button class="nk" onclick="pinIn('8','confirm')">8</button><button class="nk" onclick="pinIn('9','confirm')">9</button>
+        <button class="nk empty"></button><button class="nk" onclick="pinIn('0','confirm')">0</button><button class="nk" onclick="pinDel('confirm')">⌫</button>
+      </div>
+    </div>
+    <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:12px;margin-top:16px"><p style="color:#92400e;font-size:13px">🔒 Secured & encrypted. Powered by Nium.</p></div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="screen" id="success">
+  <div class="suc-icon">✅</div>
+  <p style="font-size:26px;font-weight:800;color:var(--text)" id="suc-t">Transfer Submitted!</p>
+  <p style="color:var(--gray);font-size:14px;margin-top:8px;text-align:center" id="suc-s">Processing by SendMV team</p>
+  <div style="background:var(--light);border-radius:20px;padding:24px;width:100%;border:1.5px solid var(--border);margin:20px 0">
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px">
+      <div><p style="color:var(--gray);font-size:12px">You sent</p><p style="font-weight:800;font-size:22px;color:var(--text)" id="suc-mvr">MVR 0</p></div>
+      <span style="font-size:24px;color:var(--gray)">→</span>
+      <div style="text-align:right"><p style="color:var(--gray);font-size:12px">They get</p><p style="font-weight:800;font-size:22px;color:var(--green)" id="suc-to">0</p></div>
+    </div>
+    <div style="background:#fef9c3;border-radius:10px;padding:12px;text-align:center;margin-bottom:12px">
+      <p style="color:#92400e;font-size:13px;font-weight:600" id="suc-eta">⏳ Processing: 30-60 minutes</p>
+    </div>
+    <div style="background:#f0f9ff;border-radius:10px;padding:12px">
+      <p style="color:#0369a1;font-size:13px;font-weight:600">📋 Next Steps:</p>
+      <p style="color:#0369a1;font-size:12px;margin-top:6px">1. Pay MVR to SendMV agent<br>2. Agent processes your transfer<br>3. Recipient gets money in 30-60 min<br>4. You'll get WhatsApp confirmation</p>
+    </div>
+  </div>
+  <p style="color:var(--gray);font-size:13px;margin-bottom:8px" id="suc-ref">Ref: #SMV000000</p>
+  <p style="color:var(--gray);font-size:12px;margin-bottom:20px;text-align:center">📱 WhatsApp opened to notify SendMV team</p>
+  <button class="btn btn-primary" style="width:100%" onclick="go('home')">Back to Home</button>
+  <button class="btn btn-outline mt16" style="width:100%" onclick="contactAgent()">📞 Contact Agent</button>
+  <button class="btn btn-outline mt16" style="width:100%" onclick="dlReceipt()">📄 Download Receipt</button>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="history">
+  <div class="ph"><button class="back" onclick="go('home')">←</button><div class="pt" id="hi-t">Transfer History</div><div class="ps" id="hi-s">All your transfers</div></div>
+  <div style="padding:20px;flex:1;overflow-y:auto;background:var(--bg)" id="history-list" class="with-nav"></div>
+</div>
+
+<!-- RATES -->
+<div class="screen" id="rates">
+  <div class="ph"><button class="back" onclick="go('home')">←</button><div class="pt">Live Rates 📊</div><div class="ps">MVR exchange rates</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div class="card" id="rates-list"><div style="text-align:center;color:var(--gray);padding:40px">Loading...</div></div>
+    <p style="color:var(--gray);font-size:12px;text-align:center;margin-top:16px">Updated every 30 min. Transfer rates may vary slightly.</p>
+  </div>
+</div>
+
+<!-- QR SCAN -->
+<div class="screen" id="qrscan">
+  <div class="ph"><button class="back" onclick="go('home')">←</button><div class="pt">QR Scanner 📷</div><div class="ps">Scan any QR to transfer</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px">
+      <p style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">QR Type</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onclick="setQRT('upi')" id="qrt-upi" style="padding:14px;border-radius:12px;border:2px solid #1a3c6e;background:#1a3c6e;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📱 UPI QR</button>
+        <button onclick="setQRT('bank')" id="qrt-bank" style="padding:14px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🏦 Bank QR</button>
+        <button onclick="setQRT('bml')" id="qrt-bml" style="padding:14px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🇲🇻 BML QR</button>
+        <button onclick="setQRT('swift')" id="qrt-swift" style="padding:14px;border-radius:12px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🌍 SWIFT QR</button>
+      </div>
+    </div>
+    <div style="background:var(--card);border-radius:20px;padding:20px;text-align:center;margin-bottom:16px">
+      <div style="width:200px;height:200px;border:3px solid #1a3c6e;border-radius:16px;margin:0 auto;display:flex;align-items:center;justify-content:center;position:relative;background:var(--light);overflow:hidden">
+        <div style="position:absolute;width:100%;height:3px;background:linear-gradient(90deg,transparent,#059669,transparent);animation:scan 2s linear infinite"></div>
+        <div><div style="font-size:48px">📷</div><p style="color:var(--gray);font-size:12px;margin-top:8px">Camera</p></div>
+      </div>
+      <button onclick="openQR()" style="margin-top:16px;padding:14px 32px;background:#1a3c6e;color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">📷 Open Camera</button>
+    </div>
+    <div style="background:var(--card);border-radius:16px;padding:16px">
+      <p style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">Enter manually</p>
+      <input type="text" class="fi" id="qr-manual" placeholder="UPI ID, Account No, IBAN...">
+      <button class="btn btn-primary" style="margin-top:12px" onclick="processQR()">Process →</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="screen" id="notifications">
+  <div class="ph"><button class="back" onclick="go('home')">←</button><div class="pt">Notifications 🔔</div><div class="ps">Your alerts</div></div>
+  <div class="pb with-nav" style="background:var(--bg)" id="notif-list"></div>
+</div>
+
+<!-- PROFILE -->
+<div class="screen" id="profile">
+  <div class="ph"><button class="back" onclick="go('home')">←</button><div class="pt" id="p-t">My Profile</div><div class="ps" id="p-s">Manage account</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:80px;height:80px;background:linear-gradient(135deg,#1a3c6e,#2563eb);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px">👤</div>
+      <div style="font-size:20px;font-weight:800;color:var(--text)" id="prof-name">User</div>
+      <div style="color:var(--gray);font-size:14px;margin-top:4px" id="prof-email"></div>
+      <div style="display:inline-flex;align-items:center;background:#f0fdf4;border-radius:20px;padding:6px 14px;margin-top:10px"><span style="color:var(--green);font-size:12px;font-weight:700">✓ Verified</span></div>
+    </div>
+    <div class="card">
+      <div class="mi" onclick="go('bank')"><div class="mi-icon">🏦</div><div class="mi-text" id="m-bank">Bank Accounts</div><span style="color:var(--gray)">›</span></div>
+      <div class="mi" onclick="go('referral')"><div class="mi-icon" style="background:#f0fdf4">🎁</div><div style="flex:1"><div class="mi-text" id="m-ref">Refer & Earn</div><div style="font-size:12px;color:var(--green)" id="m-refs">Earn MVR 20 per referral!</div></div><span style="color:var(--gray)">›</span></div>
+      <div class="mi" onclick="go('notifications')"><div class="mi-icon">🔔</div><div class="mi-text" id="m-notif">Notifications</div><span style="color:var(--gray)">›</span></div>
+      <div class="mi" onclick="go('security')"><div class="mi-icon">🔐</div><div class="mi-text" id="m-sec">Security & PIN</div><span style="color:var(--gray)">›</span></div>
+      <div class="mi" onclick="go('rates')"><div class="mi-icon">📊</div><div class="mi-text" id="m-rates">Exchange Rates</div><span style="color:var(--gray)">›</span></div>
+      <div class="mi" onclick="go('language')"><div class="mi-icon">🌐</div><div class="mi-text" id="m-lang">Language</div><span style="color:var(--gray)">›</span></div>
+      <div class="mi" onclick="toggleDark()"><div class="mi-icon" id="dark-icon">🌙</div><div class="mi-text" id="dark-lbl">Dark Mode</div><div class="tog" id="dark-tog"><div class="tog-t" id="dark-t"></div></div></div>
+      <div class="mi" onclick="doLogout()"><div class="mi-icon" style="background:#fef2f2">🚪</div><div class="mi-text" style="color:#ef4444" id="m-logout">Logout</div><span style="color:#ef4444">›</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BANK -->
+<div class="screen" id="bank">
+  <div class="ph"><button class="back" onclick="go('profile')">←</button><div class="pt">Bank Accounts 🏦</div><div class="ps">Linked accounts</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:0.08em">🇲🇻 MALDIVES (MVR)</p>
+    <div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px;border:1.5px solid var(--border)">
+      <div class="fg"><label class="fl">Bank</label><select class="fi" id="bml-bank"><option>Bank of Maldives (BML)</option><option>Maldives Islamic Bank (MIB)</option><option>STO</option><option>Dhiraagu Pay</option><option>Ooredoo Money</option><option>MIFCO</option></select></div>
+      <div class="fg"><label class="fl">Account Number</label><input type="tel" class="fi" id="bml-acc" placeholder="7770000123456"></div>
+      <div class="fg"><label class="fl">Account Holder Name</label><input type="text" class="fi" id="bml-name" placeholder="Full name"></div>
+      <button class="btn btn-primary" onclick="saveMVR()" style="margin-top:4px">Save MVR Account ✅</button>
+    </div>
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:0.08em">🇮🇳 INDIA (INR)</p>
+    <div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px;border:1.5px solid var(--border)">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="bt-upi" onclick="swTab('upi')" style="flex:1;padding:11px;border-radius:11px;border:2px solid #1a3c6e;background:#1a3c6e;color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">📱 UPI</button>
+        <button id="bt-bnk" onclick="swTab('bank')" style="flex:1;padding:11px;border-radius:11px;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🏦 Bank</button>
+      </div>
+      <div id="upi-s"><div class="fg"><label class="fl">Phone (UPI)</label><div class="pr"><div class="pc">🇮🇳 +91</div><input type="tel" class="pi" id="upi-ph" placeholder="98765 43210" maxlength="10"></div></div><div class="fg"><label class="fl">Name</label><input type="text" class="fi" id="upi-nm" placeholder="Recipient name"></div><button class="btn btn-primary" onclick="saveUPI()">Save UPI ✅</button></div>
+      <div id="bnk-s" style="display:none">
+        <div class="fg"><label class="fl">Account Holder Name</label><input type="text" class="fi" id="bnk-nm" placeholder="Full name"></div>
+        <div class="fg"><label class="fl">Bank</label><select class="fi" id="bnk-bk"><option>State Bank of India (SBI)</option><option>HDFC Bank</option><option>ICICI Bank</option><option>Axis Bank</option><option>Punjab National Bank</option><option>Bank of Baroda</option><option>Canara Bank</option><option>Kotak Mahindra Bank</option><option>Union Bank of India</option><option>IndusInd Bank</option><option>Yes Bank</option><option>Federal Bank</option><option>Other</option></select></div>
+        <div class="fg"><label class="fl">Account Number</label><input type="tel" class="fi" id="bnk-ac" placeholder="1234567890123456"></div>
+        <div class="fg"><label class="fl">IFSC Code</label><input type="text" class="fi" id="bnk-if" placeholder="SBIN0001234" style="text-transform:uppercase"></div>
+        <button class="btn btn-primary" onclick="saveBankIN()">Save Bank ✅</button>
+      </div>
+    </div>
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:0.08em">🌍 INTERNATIONAL</p>
+    <div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px;border:1.5px solid var(--border)">
+      <div class="fg"><label class="fl">Name</label><input type="text" class="fi" id="intl-nm" placeholder="Account holder name"></div>
+      <div class="fg"><label class="fl">Country & Bank</label><input type="text" class="fi" id="intl-bk" placeholder="e.g. Chase Bank, USA"></div>
+      <div class="fg"><label class="fl">IBAN / Account</label><input type="text" class="fi" id="intl-ib" placeholder="IBAN or account number"></div>
+      <div class="fg"><label class="fl">SWIFT / BIC</label><input type="text" class="fi" id="intl-sw" placeholder="e.g. CHASUS33" style="text-transform:uppercase"></div>
+      <button class="btn btn-purple" onclick="saveIntl()">Save International ✅</button>
+    </div>
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:0.08em">SAVED ACCOUNTS</p>
+    <div id="saved-banks"><div style="text-align:center;color:var(--gray);padding:20px">No accounts saved yet</div></div>
+  </div>
+</div>
+
+<!-- SECURITY -->
+<div class="screen" id="security">
+  <div class="ph"><button class="back" onclick="go('profile')">←</button><div class="pt">Security 🔐</div><div class="ps">Keep your account safe</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div class="card">
+      <div class="mi" onclick="go('setpin')"><div class="mi-icon">🔢</div><div style="flex:1"><div class="mi-text">Change Transaction PIN</div><div style="font-size:12px;color:var(--gray)">Update 4-digit PIN</div></div><span style="color:var(--gray)">›</span></div>
+      <div class="mi"><div class="mi-icon">🔒</div><div style="flex:1"><div class="mi-text">Auto Lock</div><div style="font-size:12px;color:var(--gray)">Lock after 30 min</div></div><div class="tog on"><div class="tog-t" style="left:22px"></div></div></div>
+      <div class="mi" onclick="toggleHideBal()"><div class="mi-icon">👁️</div><div style="flex:1"><div class="mi-text">Hide Balance</div><div style="font-size:12px;color:var(--gray)">Hide amounts on screen</div></div><div class="tog" id="hb-tog"><div class="tog-t" id="hb-t"></div></div></div>
+    </div>
+    <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:14px;margin-top:16px"><p style="color:#92400e;font-size:13px;font-weight:600">🔒 Security Tips</p><p style="color:#92400e;font-size:12px;margin-top:6px">• Never share your PIN<br>• SendMV will never ask for your PIN<br>• Use a unique PIN<br>• Enable auto-lock</p></div>
+  </div>
+</div>
+
+<!-- LANGUAGE -->
+<div class="screen" id="language">
+  <div class="ph"><button class="back" onclick="go('profile')">←</button><div class="pt">Language 🌐</div><div class="ps">Choose language</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div class="card">
+      <div class="mi" onclick="setLang('en');go('profile')"><div class="mi-icon">🇬🇧</div><div style="flex:1"><div class="mi-text">English</div></div><span id="ck-en" style="color:var(--green);font-weight:700">✓</span></div>
+      <div class="mi" onclick="setLang('dv');go('profile')"><div class="mi-icon">🇲🇻</div><div style="flex:1"><div class="mi-text">ދިވެހި</div></div><span id="ck-dv" style="color:var(--green);font-weight:700;display:none">✓</span></div>
+    </div>
+    <div style="background:var(--light);border-radius:12px;padding:14px;margin-top:16px"><p style="color:var(--gray);font-size:13px">More languages coming soon! 🌍</p></div>
+  </div>
+</div>
+
+<!-- REFERRAL -->
+<div class="screen" id="referral">
+  <div class="ph"><button class="back" onclick="go('profile')">←</button><div class="pt">Refer & Earn 🎁</div><div class="ps" id="ref-sub">Invite friends, earn MVR 20!</div></div>
+  <div class="pb with-nav" style="background:var(--bg)">
+    <div style="background:linear-gradient(135deg,#059669,#047857);border-radius:20px;padding:24px;text-align:center;margin-bottom:20px">
+      <div style="color:rgba(255,255,255,0.8);font-size:13px">Total Earnings</div>
+      <div style="color:#fff;font-size:40px;font-weight:800;margin-top:4px" id="ref-earn">MVR 0</div>
+      <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-top:4px" id="ref-cnt">0 friends referred</div>
+    </div>
+    <div style="background:var(--card);border-radius:16px;padding:20px;margin-bottom:16px;border:1.5px dashed var(--border);text-align:center">
+      <div style="font-size:13px;color:var(--gray);margin-bottom:8px">Your Referral Code</div>
+      <div style="font-size:32px;font-weight:800;color:var(--text);letter-spacing:4px" id="ref-code">SMV0000</div>
+      <button onclick="copyRef()" style="margin-top:12px;padding:10px 24px;background:var(--navy);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📋 Copy Code</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <button onclick="shareWA()" style="padding:14px;background:#25D366;color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">💬 WhatsApp</button>
+      <button onclick="shareTG()" style="padding:14px;background:#0088cc;color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✈️ Telegram</button>
+      <button onclick="shareSMS()" style="padding:14px;background:var(--navy);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📱 SMS</button>
+      <button onclick="shareLink()" style="padding:14px;background:var(--light);color:var(--text);border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">🔗 Copy Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav" id="bnav" style="display:none">
+  <button class="ni active" id="ni-home" onclick="go('home')"><span style="font-size:22px">🏠</span><span class="ni-label" id="nl-home">Home</span></button>
+  <button class="ni" id="ni-send" onclick="go('transfer-select')"><span style="font-size:22px">💸</span><span class="ni-label" id="nl-send">Send</span></button>
+  <button class="ni" id="ni-history" onclick="go('history')"><span style="font-size:22px">📋</span><span class="ni-label" id="nl-hist">History</span></button>
+  <button class="ni" id="ni-profile" onclick="go('profile')"><span style="font-size:22px">👤</span><span class="ni-label" id="nl-prof">Profile</span></button>
+</div>
+</div>
+
+<script>
+const API='https://sendmv.onrender.com';
+const APP='https://sharukg703-art.github.io/Sendmv/sendmv-login.html';
+const S={
+  token:localStorage.getItem('smv_tk'),
+  user:JSON.parse(localStorage.getItem('smv_usr')||'null'),
+  rate:{INR:4.82,USD:0.065,GBP:0.051,EUR:0.059,AED:0.24,SGD:0.088,AUD:0.098,CAD:0.089,MYR:0.3,SAR:0.24,LKR:20.1,BDT:7.1},
+  mvr:0,to:0,toCurr:'INR',mode:'india',method:'upi',
+  recName:'',recPhone:'',lang:localStorage.getItem('smv_lang')||'en',
+  pSV:'',pCV:'',pMode:'set1',pSaved:''
+};
+const T={
+  en:{sp:'Money Transfers Made Easy',wfl:'Local',wfls:'BML · MIB · STO',wfi:'India',wfis:'UPI · IMPS · NEFT',wfg:'Global',wfgs:'SWIFT · Wire',bc:'Create Free Account',bl:'Login to Account',bn:'Create New Account',hg:'Good morning 👋',hrl:"Today's Rates",hr:'Recent Transfers',hsb:'💸  Send Money Now',qs:'Send',qq:'QR',qr:'Rates',qh:'History',nl:'Home',ns:'Send',nh:'History',np:'Profile',pt:'My Profile',ps:'Manage account',mb:'Bank Accounts',mr:'Refer & Earn',mrs:'Earn MVR 20 per referral!',mn:'Notifications',ms:'Security & PIN',mrt:'Exchange Rates',ml:'Language',mlo:'Logout',tst:'Send Money',tss:'Choose transfer type',tsl:'Local Transfer',tsls:'Send within Maldives',tsf:'Free',tsi:'India Transfer',tsis:'MVR → INR in 30 min',tsif:'MVR 10',tsit:'International',tsits:'150+ countries',tsitf:'1-3 days',ht:'Transfer History',hs:'All your transfers',rs:'Invite friends, earn MVR 20!'},
+  dv:{sp:'ފައިސާ ފޮނުވުން ފަސޭހަ',wfl:'ލޯކަލް',wfls:'ބީ.އެމް.އެލް · ޑީ.ހައި',wfi:'އިންޑިއާ',wfis:'ޔޫ.ޕީ.އައި · ބޭންކް',wfg:'ބައިނަލްއަގްވާމީ',wfgs:'SWIFT · ވަޔަރ',bc:'ހިލޭ އެކައުންޓް ހަދާ',bl:'ލޮގިން ކުރޭ',bn:'އެކައުންޓް ހަދާ',hg:'ހެނދުނު ހެޔޮ 👋',hrl:'ރޭޓްތައް',hr:'ފަހުގެ ޓްރާންސްފާ',hsb:'💸  ފައިސާ ފޮނުވާ',qs:'ފޮނުވާ',qq:'QR',qr:'ރޭޓް',qh:'ތާރީޚް',nl:'ހޯމް',ns:'ފޮނުވާ',nh:'ތާރީޚް',np:'ޕްރޮފައިލް',pt:'ޕްރޮފައިލް',ps:'އެކައުންޓް',mb:'ބޭންކް',mr:'ރިފަ ކޮށް ކަމާ',mrs:'MVR 20 ލިބޭ!',mn:'ނޮޓިފިކޭޝަން',ms:'ސެކިއުރިޓީ',mrt:'ރޭޓްތައް',ml:'ބަސް',mlo:'ލޮގްއައުޓް',tst:'ފައިސާ ފޮނުވާ',tss:'ވައްތަރު ހޮވާ',tsl:'ލޯކަލް',tsls:'މޯލްޑިވްސް ތެރޭ',tsf:'ހިލޭ',tsi:'އިންޑިއާ',tsis:'MVR → INR 30 ދ.',tsif:'MVR 10',tsit:'ބައިނަލްއަގްވާމީ',tsits:'150+ ގައުމު',tsitf:'1-3 ދުވަސް',ht:'ތާރީޚް',hs:'ހުރިހާ ޓްރާންސްފާ',rs:'ރިފަ ކޮށް MVR 20 ހޯދާ!'}
+};
+function t(k){return T[S.lang]?.[k]||T.en[k]||k}
+function setLang(l){
+  S.lang=l;localStorage.setItem('smv_lang',l);
+  const m={'sp-sub':t('sp'),'wf-local':t('wfl'),'wf-locals':t('wfls'),'wf-india':t('wfi'),'wf-indias':t('wfis'),'wf-intl':t('wfg'),'wf-intls':t('wfgs'),'btn-create':t('bc'),'btn-login':t('bl'),'btn-new':t('bn'),'h-greet':t('hg'),'h-rl':t('hrl'),'h-recent':t('hr'),'h-send-btn':t('hsb'),'q-send':t('qs'),'q-qr':t('qq'),'q-rates':t('qr'),'q-hist':t('qh'),'nl-home':t('nl'),'nl-send':t('ns'),'nl-hist':t('nh'),'nl-prof':t('np'),'p-t':t('pt'),'p-s':t('ps'),'m-bank':t('mb'),'m-ref':t('mr'),'m-refs':t('mrs'),'m-notif':t('mn'),'m-sec':t('ms'),'m-rates':t('mrt'),'m-lang':t('ml'),'m-logout':t('mlo'),'ts-t':t('tst'),'ts-s':t('tss'),'ts-local':t('tsl'),'ts-locals':t('tsls'),'ts-lf':t('tsf'),'ts-india':t('tsi'),'ts-indias':t('tsis'),'ts-if':t('tsif'),'ts-intl':t('tsit'),'ts-intls':t('tsits'),'ts-intf':t('tsitf'),'hi-t':t('ht'),'hi-s':t('hs'),'ref-sub':t('rs')};
+  Object.entries(m).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v});
+  document.getElementById('lb-en')?.classList.toggle('active',l==='en');
+  document.getElementById('lb-dv')?.classList.toggle('active',l==='dv');
+  const en=document.getElementById('ck-en');if(en)en.style.display=l==='en'?'':'none';
+  const dv=document.getElementById('ck-dv');if(dv)dv.style.display=l==='dv'?'':'none';
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const s=document.getElementById(id);if(!s)return;
+  s.classList.add('active','slide-up');setTimeout(()=>s.classList.remove('slide-up'),300);
+  const nav=document.getElementById('bnav');
+  const show=['home','transfer-select','send','recipient','confirm','success','history','profile','bank','referral','notifications','qrscan','security','language','rates'].includes(id);
+  nav.style.display=(show&&S.token)?'flex':'none';
+  ['home','send','history','profile'].forEach(n=>{const ni=document.getElementById('ni-'+n);if(ni)ni.classList.toggle('active',n===id||(n==='send'&&id==='transfer-select'))});
+  if(id==='home')setTimeout(loadHome,100);
+  if(id==='history')setTimeout(loadHistory,100);
+  if(id==='referral')setTimeout(loadRef,100);
+  if(id==='bank')setTimeout(loadBanks,100);
+  if(id==='notifications')setTimeout(loadNotifs,100);
+  if(id==='rates')setTimeout(loadRates,100);
+  if(id==='recipient')setTimeout(loadSavedRecs,100);
+}
+async function api(path,opts={}){
+  const h={'Content-Type':'application/json'};
+  if(S.token)h['Authorization']='Bearer '+S.token;
+  const r=await fetch(API+path,{...opts,headers:{...h,...opts.headers}});
+  return r.json();
+}
+async function fetchRates(){
+  try{const r=await fetch('https://open.er-api.com/v6/latest/MVR');const d=await r.json();if(d.rates){['INR','USD','GBP','EUR','AED','SGD','AUD','CAD','MYR','SAR','LKR','BDT'].forEach(c=>{if(d.rates[c])S.rate[c]=d.rates[c]});updateRateUI();}}catch(e){updateRateUI();}
+}
+function updateRateUI(){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  set('home-rate',`1 MVR = ${S.rate.INR?.toFixed(2)||'4.82'} INR`);
+  set('r-inr',S.rate.INR?.toFixed(2)||'4.82');set('r-usd',S.rate.USD?.toFixed(4)||'0.065');
+  set('r-aed',S.rate.AED?.toFixed(3)||'0.24');set('r-gbp',S.rate.GBP?.toFixed(4)||'0.051');
+  set('h-usd',S.rate.USD?.toFixed(4)||'0.065');set('h-gbp',S.rate.GBP?.toFixed(4)||'0.051');
+  set('h-aed',S.rate.AED?.toFixed(3)||'0.24');set('h-sgd',S.rate.SGD?.toFixed(4)||'0.088');
+}
+fetch(API+'/').catch(()=>{});
+setTimeout(async()=>{setLang(S.lang);await fetchRates();if(S.token&&S.user)loginUser(S.user);else go('welcome');},2200);
+async function doSignup(){
+  const name=document.getElementById('su-name').value.trim(),phone=document.getElementById('su-phone').value.trim(),email=document.getElementById('su-email').value.trim(),pass=document.getElementById('su-pass').value;
+  if(!name){showToast('❌ Enter your name');return}if(!phone){showToast('❌ Enter your phone');return}if(!email){showToast('❌ Enter your email');return}if(pass.length<8){showToast('❌ Password min 8 chars');return}
+  const btn=document.getElementById('su-btn');btn.disabled=true;btn.innerHTML='<span class="loader"></span>';
+  try{const d=await api('/api/auth/signup',{method:'POST',body:JSON.stringify({name,phone,email,password:pass})});if(d.error){showToast('❌ '+d.error);return}S.tempUser={name,phone,email,password:pass};document.getElementById('otp-num').textContent='+960 '+phone;showToast('📱 OTP sent! Use 123456 for demo');go('otp');}catch(e){showToast('❌ Connection error')}finally{btn.disabled=false;btn.textContent='Create Account →'}
+}
+function otpIn(el,i){if(el.value.length===1){const b=document.querySelectorAll('.otp-box');if(i<5)b[i+1].focus();if(i===5)verifyOTP();}}
+function otpKey(e,el,i){if(e.key==='Backspace'&&!el.value&&i>0)document.querySelectorAll('.otp-box')[i-1].focus()}
+async function verifyOTP(){
+  const code=Array.from(document.querySelectorAll('.otp-box')).map(b=>b.value).join('');
+  if(code.length<6){showToast('❌ Enter 6-digit code');return}
+  try{const d=await api('/api/auth/verify-otp',{method:'POST',body:JSON.stringify({phone:S.tempUser?.phone,otp:code})});if(d.token){S.token=d.token;localStorage.setItem('smv_tk',d.token);go('setpin');return}}catch(e){}
+  if(code==='123456'){try{const ld=await api('/api/auth/login',{method:'POST',body:JSON.stringify({identifier:S.tempUser?.phone||S.tempUser?.email,password:S.tempUser?.password})});if(ld.token){S.token=ld.token;localStorage.setItem('smv_tk',ld.token);go('setpin');return}}catch(e){}go('setpin');}else showToast('❌ Wrong OTP. Use 123456');
+}
+async function doLogin(){
+  const id=document.getElementById('li-id').value.trim(),pw=document.getElementById('li-pass').value;
+  if(!id){showToast('❌ Enter phone or email');return}if(!pw){showToast('❌ Enter password');return}
+  const btn=document.getElementById('li-btn');btn.disabled=true;btn.innerHTML='<span class="loader"></span>';
+  try{const d=await api('/api/auth/login',{method:'POST',body:JSON.stringify({identifier:id,password:pw})});if(d.error){showToast('❌ '+d.error);return}S.token=d.token;localStorage.setItem('smv_tk',d.token);loginUser(d.user);}catch(e){showToast('❌ Connection error')}finally{btn.disabled=false;btn.textContent='Login →'}
+}
+function loginUser(u){
+  S.user=u;localStorage.setItem('smv_usr',JSON.stringify(u));
+  ['home-name','prof-name'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=u?.name||'User'});
+  const pe=document.getElementById('prof-email');if(pe)pe.textContent=u?.email||'';
+  addNotif('✅ Login','Welcome back, '+(u?.name||'User')+'!');
+  showToast('✅ Welcome, '+(u?.name||'User')+'!');setTimeout(()=>go('home'),500);
+}
+function doLogout(){S.token=null;S.user=null;localStorage.removeItem('smv_tk');localStorage.removeItem('smv_usr');showToast('👋 Logged out');setTimeout(()=>go('welcome'),1000)}
+function pinIn(n,mode){
+  if(mode==='set'){
+    if(S.pMode==='set1'){if(S.pSV.length<4){S.pSV+=n;updPD('pdots','pd',S.pSV);if(S.pSV.length===4){setTimeout(()=>{const pt=document.getElementById('pin-t');if(pt)pt.textContent='Confirm Your PIN 🔐';const ps=document.getElementById('pin-s');if(ps)ps.textContent='Re-enter your PIN';S.pSaved=S.pSV;S.pSV='';updPD('pdots','pd','');S.pMode='set2';},300);}}}
+    else{if(S.pSV.length<4){S.pSV+=n;updPD('pdots','pd',S.pSV);if(S.pSV.length===4){if(S.pSV===S.pSaved){localStorage.setItem('smv_pin',S.pSV);showToast('🔐 PIN saved!');S.pSV='';S.pSaved='';S.pMode='set1';const pt=document.getElementById('pin-t');if(pt)pt.textContent='Set Transaction PIN 🔐';const ps=document.getElementById('pin-s');if(ps)ps.textContent='4-digit PIN for all transfers';updPD('pdots','pd','');if(S.tempUser)loginUser({name:S.tempUser.name,email:S.tempUser.email});else go('home');}else{showToast("❌ PINs don't match!");S.pSV='';S.pSaved='';S.pMode='set1';const pt=document.getElementById('pin-t');if(pt)pt.textContent='Set Transaction PIN 🔐';updPD('pdots','pd','');}}}}
+  }else if(mode==='confirm'){
+    if(S.pCV.length<4){S.pCV+=n;updPD('cdots','cp',S.pCV);if(S.pCV.length===4){const sp=localStorage.getItem('smv_pin');if(!sp||S.pCV===sp){S.pCV='';updPD('cdots','cp','');doTransfer();}else{showToast('❌ Wrong PIN!');S.pCV='';updPD('cdots','cp','');}}}
+  }
+}
+function pinDel(mode){if(mode==='set'){S.pSV=S.pSV.slice(0,-1);updPD('pdots','pd',S.pSV)}else{S.pCV=S.pCV.slice(0,-1);updPD('cdots','cp',S.pCV)}}
+function updPD(wrap,pre,val){for(let i=0;i<4;i++){const d=document.getElementById(pre+i);if(d){d.classList.toggle('filled',i<val.length);d.textContent=i<val.length?'●':''}}}
+function addNotif(title,msg){const ns=JSON.parse(localStorage.getItem('smv_notifs')||'[]');ns.unshift({title,msg,time:new Date().toLocaleString(),read:false});if(ns.length>20)ns.pop();localStorage.setItem('smv_notifs',JSON.stringify(ns));updBadge();}
+function updBadge(){const ns=JSON.parse(localStorage.getItem('smv_notifs')||'[]');const u=ns.filter(n=>!n.read).length;const b=document.getElementById('nbadge');if(b){b.style.display=u>0?'flex':'none';b.textContent=u}}
+function loadNotifs(){
+  const ns=JSON.parse(localStorage.getItem('smv_notifs')||'[]');ns.forEach(n=>n.read=true);localStorage.setItem('smv_notifs',JSON.stringify(ns));updBadge();
+  const c=document.getElementById('notif-list');if(!c)return;
+  if(!ns.length){c.innerHTML='<div style="text-align:center;color:var(--gray);padding:40px">No notifications yet 🔔</div>';return}
+  c.innerHTML=ns.map(n=>`<div style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:10px;display:flex;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border-left:4px solid var(--green)"><div style="font-size:24px">🔔</div><div><div style="font-weight:700;color:var(--text);font-size:14px">${n.title}</div><div style="color:var(--gray);font-size:13px;margin-top:2px">${n.msg}</div><div style="color:var(--gray);font-size:11px;margin-top:4px">${n.time}</div></div></div>`).join('');
+}
+async function loadHome(){
+  const n=document.getElementById('home-name');if(n)n.textContent=S.user?.name||'User';
+  updateRateUI();updBadge();
+  const hr=new Date().getHours();const greet=hr<12?'Good morning 👋':hr<17?'Good afternoon 👋':'Good evening 👋';
+  const gel=document.getElementById('h-greet');if(gel)gel.textContent=greet;
+  loadRecentTxns();
+}
+async function loadRecentTxns(){
+  const c=document.getElementById('home-txns');if(!c)return;
+  try{
+    const d=await api('/api/transfer/history');
+    if(!Array.isArray(d)||!d.length){c.innerHTML='<div style="text-align:center;color:var(--gray);padding:20px">No transfers yet. Send your first one! 💸</div>';return}
+    const icon={local:'🇲🇻',india:'🇮🇳',international:'🌍'};
+    c.innerHTML=d.slice(0,3).map(tx=>`<div class="tx-card"><div style="width:44px;height:44px;background:#f0f4ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px">${icon[tx.transferType]||'🇮🇳'}</div><div style="flex:1"><div style="font-weight:600;color:var(--text);font-size:14px">${tx.recipientName||'Unknown'}</div><div style="color:var(--gray);font-size:12px">${new Date(tx.createdAt).toLocaleDateString()}</div></div><div style="text-align:right"><div style="font-weight:700;color:var(--text)">MVR ${tx.mvrAmount}</div><div style="color:var(--green);font-size:12px">✓ ${tx.status}</div></div></div>`).join('');
+  }catch(e){c.innerHTML='<div style="text-align:center;color:var(--gray);padding:20px">Could not load transfers</div>'}
+}
+function setUSDSource(src){
+  S.usdSource=src;
+  ['cash','bank'].forEach(x=>{
+    const b=document.getElementById('usrc-'+x);if(!b)return;
+    b.style.background=x===src?'#16a34a':'var(--card)';
+    b.style.color=x===src?'#fff':'var(--text)';
+    b.style.borderColor=x===src?'#16a34a':'var(--border)';
+  });
+}
+function setCrypto(type){
+  S.cryptoType=type;
+  ['usdt','btc'].forEach(x=>{
+    const b=document.getElementById('cry-'+x);if(!b)return;
+    b.style.background=x===type?'#d97706':'var(--card)';
+    b.style.color=x===type?'#fff':'var(--text)';
+    b.style.borderColor=x===type?'#d97706':'var(--border)';
+  });
+}
+function startTransfer(mode){
+  S.mode=mode;S.toCurr='INR';
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  const show=(id,v)=>{const el=document.getElementById(id);if(el)el.style.display=v};
+  const badge=document.getElementById('to-badge');
+  const fromBadge=document.getElementById('from-badge');
+  const ft=document.getElementById('fee-tbl');if(ft)ft.style.display='none';
+  const sb=document.getElementById('send-btn');if(sb)sb.style.opacity='0.5';
+  const mi=document.getElementById('mvr-in');if(mi){mi.value='';mi.placeholder='0';}
+  const to=document.getElementById('to-out');if(to)to.textContent='0';
+  // Hide all selectors first
+  ['india-tabs','intl-curr-sel','local-from','usd-source','crypto-source'].forEach(id=>show(id,'none'));
+  if(mode==='local'){
+    set('s-t','Local Transfer 🇲🇻');set('s-s','Send within Maldives');
+    show('local-from','block');
+    document.getElementById('fee-amt').textContent='Free';
+    document.getElementById('fee-time').textContent='Instant';
+    if(badge){badge.textContent='MVR 🇲🇻';badge.style.background='#0891b2'}
+    if(fromBadge){fromBadge.textContent='MVR 🇲🇻';fromBadge.style.background='#0f2447'}
+    S.toCurr='MVR';
+  }else if(mode==='india'){
+    set('s-t','India Transfer 🇮🇳');set('s-s','MVR → INR transfer');
+    show('india-tabs','flex');
+    document.getElementById('fee-amt').textContent='MVR 10';
+    document.getElementById('fee-time').textContent='~30 minutes';
+    if(badge){badge.textContent='INR 🇮🇳';badge.style.background='#f97316'}
+    if(fromBadge){fromBadge.textContent='MVR 🇲🇻';fromBadge.style.background='#0f2447'}
+    S.toCurr='INR';setMethod('upi');
+  }else if(mode==='usd-india'){
+    set('s-t','USD → INR 💵🇮🇳');set('s-s','Dollar to India');
+    show('usd-source','block');show('india-tabs','flex');
+    document.getElementById('fee-amt').textContent='MVR 15';
+    document.getElementById('fee-time').textContent='~30-60 minutes';
+    if(badge){badge.textContent='INR 🇮🇳';badge.style.background='#16a34a'}
+    if(fromBadge){fromBadge.textContent='USD 💵';fromBadge.style.background='#16a34a'}
+    S.toCurr='INR';S.usdSource='cash';setMethod('upi');
+    // Change input to USD
+    const mi2=document.getElementById('mvr-in');if(mi2)mi2.placeholder='Enter USD amount';
+    const sl=document.getElementById('s-send');if(sl)sl.textContent='You send (USD)';
+  }else if(mode==='crypto'){
+    set('s-t','Crypto → INR ₿');set('s-s','Crypto bridge to India');
+    show('crypto-source','block');
+    document.getElementById('fee-amt').textContent='1% of amount';
+    document.getElementById('fee-time').textContent='~15-30 minutes';
+    if(badge){badge.textContent='INR 🇮🇳';badge.style.background='#d97706'}
+    if(fromBadge){fromBadge.textContent='USDT ₿';fromBadge.style.background='#d97706'}
+    S.toCurr='INR';S.cryptoType='usdt';
+    const sl=document.getElementById('s-send');if(sl)sl.textContent='You send (USDT/BTC)';
+  }else{
+    set('s-t','International 🌍');set('s-s','Send worldwide');
+    show('intl-curr-sel','block');
+    document.getElementById('fee-amt').textContent='MVR 20';
+    document.getElementById('fee-time').textContent='1-3 business days';
+    if(badge){badge.textContent='INR 🌍';badge.style.background='#7c3aed'}
+    if(fromBadge){fromBadge.textContent='MVR 🇲🇻';fromBadge.style.background='#0f2447'}
+    S.toCurr='INR';
+  }
+  go('send');
+}
+function setMethod(m){
+  S.method=m;
+  ['upi','imps'].forEach(x=>{const b=document.getElementById('tab-'+x);if(!b)return;b.style.background=x===m?'#1a3c6e':'var(--card)';b.style.color=x===m?'#fff':'var(--text)';b.style.borderColor=x===m?'#1a3c6e':'var(--border)';});
+}
+const SYM={INR:'₹',USD:'$',GBP:'£',EUR:'€',AED:'AED ',SGD:'S$',AUD:'A$',CAD:'C$',MYR:'RM ',SAR:'SAR ',LKR:'LKR ',BDT:'৳',MVR:'MVR '};
+function calcTo(){
+  const mvr=parseFloat(document.getElementById('mvr-in').value)||0;
+  S.mvr=mvr;
+  let curr=S.toCurr;
+  let rate=1;
+  if(S.mode==='international'){
+    curr=document.getElementById('intl-curr')?.value||'INR';
+    S.toCurr=curr;
+    const b=document.getElementById('to-badge');if(b)b.textContent=curr+' 🌍';
+    rate=S.rate[curr]||1;
+  }else if(S.mode==='usd-india'){
+    // USD input → INR output
+    // 1 USD = S.rate.INR / S.rate.USD INR
+    rate=(S.rate.INR||83)/(S.rate.USD||0.065);
+    curr='INR';
+  }else if(S.mode==='crypto'){
+    // USDT≈USD → INR
+    rate=(S.rate.INR||83)/(S.rate.USD||0.065);
+    curr='INR';
+  }else if(S.mode==='local'){
+    rate=1;curr='MVR';
+  }else{
+    rate=S.rate[curr]||S.rate.INR||83;
+  }
+  S.to=+(mvr*rate).toFixed(2);
+  const sym=SYM[curr]||'';
+  const to=document.getElementById('to-out');
+  if(to)to.textContent=S.to>0?sym+S.to.toLocaleString('en-IN',{maximumFractionDigits:2}):'0';
+  const fr=document.getElementById('fee-rate');
+  if(fr){
+    if(S.mode==='usd-india')fr.textContent=`1 USD = ${rate.toFixed(2)} INR`;
+    else if(S.mode==='crypto')fr.textContent=`1 USDT ≈ ${rate.toFixed(2)} INR`;
+    else if(S.mode==='local')fr.textContent='Local MVR transfer';
+    else fr.textContent=`1 ${S.mode==='usd-india'?'USD':'MVR'} = ${rate.toFixed(4)} ${curr}`;
+  }
+  const fee=S.mode==='local'?0:S.mode==='international'?20:S.mode==='usd-india'?15:S.mode==='crypto'?Math.ceil(mvr*0.01):10;
+  const sb2=document.getElementById('send-btn');const ft2=document.getElementById('fee-tbl');
+  if(mvr>=1){
+    if(sb2)sb2.style.opacity='1';if(ft2)ft2.style.display='block';
+    const ftot=document.getElementById('fee-total');
+    const feeLabel=S.mode==='crypto'?`${fee} USDT (1%)`:`MVR ${fee}`;
+    const totalLabel=S.mode==='usd-india'||S.mode==='crypto'?`${mvr} + fee`:`MVR ${(mvr+fee).toFixed(2)}`;
+    const fa=document.getElementById('fee-amt');if(fa)fa.textContent=feeLabel;
+    if(ftot)ftot.textContent=totalLabel;
+  }else{if(sb2)sb2.style.opacity='0.5';if(ft2)ft2.style.display='none';}
+}
+function goRecipient(){
+  // Minimum check - different for each mode
+  const min=S.mode==='usd-india'?1:S.mode==='crypto'?1:50;
+  if(S.mvr<min){showToast('❌ Minimum '+(S.mode==='usd-india'?'USD 1':S.mode==='crypto'?'1 USDT':'MVR 50'));return}
+  const rm=document.getElementById('rec-mvr');
+  if(rm){
+    if(S.mode==='usd-india')rm.textContent='USD '+S.mvr;
+    else if(S.mode==='crypto')rm.textContent=S.mvr+' '+(S.cryptoType||'USDT').toUpperCase();
+    else rm.textContent='MVR '+S.mvr;
+  }
+  const rt=document.getElementById('rec-to');
+  if(rt){const sym=SYM[S.toCurr]||'';rt.textContent=sym+S.to.toLocaleString('en-IN',{maximumFractionDigits:2});}
+  // Show correct recipient fields
+  ['rec-local','rec-upi','rec-bank','rec-intl'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  if(S.mode==='local')document.getElementById('rec-local').style.display='block';
+  else if(S.mode==='usd-india'&&S.method==='upi')document.getElementById('rec-upi').style.display='block';
+  else if(S.mode==='usd-india'&&S.method==='imps')document.getElementById('rec-bank').style.display='block';
+  else if(S.mode==='india'&&S.method==='upi')document.getElementById('rec-upi').style.display='block';
+  else if(S.mode==='india'&&S.method==='imps')document.getElementById('rec-bank').style.display='block';
+  else if(S.mode==='crypto')document.getElementById('rec-upi').style.display='block';
+  else document.getElementById('rec-intl').style.display='block';
+  go('recipient');
+}
+function loadSavedRecs(){
+  const banks=JSON.parse(localStorage.getItem('smv_banks')||'[]');
+  const c=document.getElementById('saved-recs');if(!c)return;
+  const rel=banks.filter(b=>S.mode==='local'?b.type==='MVR':S.mode==='india'?b.type==='INR':b.type==='INTL');
+  if(!rel.length){c.innerHTML='';return}
+  c.innerHTML='<p style="font-size:13px;font-weight:700;color:var(--gray);margin-bottom:10px">SAVED RECIPIENTS</p>'+rel.map(b=>`<div class="tx-card" style="cursor:pointer" onclick="fillRec('${b.name}','${b.phone||b.acc||b.iban||''}')"><div style="width:40px;height:40px;background:#f0f4ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px">${b.flag}</div><div style="flex:1"><div style="font-weight:600;color:var(--text);font-size:14px">${b.name}</div><div style="color:var(--gray);font-size:12px">${b.method}</div></div><span style="color:var(--accent);font-size:13px;font-weight:600">Use →</span></div>`).join('');
+}
+function fillRec(name,acc){['rec-nm-upi','rec-nm-local','rec-bank-nm','rec-intl-nm'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=name});const rp=document.getElementById('rec-phone');if(rp)rp.value=acc;const rl=document.getElementById('rec-local-acc');if(rl)rl.value=acc;}
+function goConfirm(){
+  let name,details,type,time;
+  const fee=S.mode==='local'?'Free':S.mode==='international'?'MVR 20':'MVR 10';
+  if(S.mode==='local'){name=document.getElementById('rec-nm-local')?.value.trim();const bank=document.getElementById('rec-local-bank')?.value;const acc=document.getElementById('rec-local-acc')?.value.trim();if(!name||!acc){showToast('❌ Fill all fields');return}S.recName=name;S.recPhone=acc;details=bank+' · '+acc;type='Local 🇲🇻';time='Instant';}
+  else if(S.mode==='india'&&S.method==='upi'){name=document.getElementById('rec-nm-upi')?.value.trim();const phone=document.getElementById('rec-phone')?.value.trim();if(!name){showToast('❌ Enter name');return}if(!phone||phone.length!==10){showToast('❌ Enter valid 10-digit phone');return}S.recName=name;S.recPhone=phone;details='📱 UPI · +91 '+phone;type='India UPI 🇮🇳';time='~30 minutes';}
+  else if(S.mode==='india'&&S.method==='imps'){name=document.getElementById('rec-bank-nm')?.value.trim();const acc=document.getElementById('rec-acc')?.value.trim();const ifsc=document.getElementById('rec-ifsc')?.value.trim().toUpperCase();if(!name||!acc||!ifsc){showToast('❌ Fill all fields');return}if(ifsc.length!==11){showToast('❌ IFSC must be 11 chars');return}S.recName=name;S.recPhone=acc;details=acc+' · '+ifsc;type='India Bank 🏦';time='~30 minutes';}
+  else{name=document.getElementById('rec-intl-nm')?.value.trim();const iban=document.getElementById('rec-intl-iban')?.value.trim();const swift=document.getElementById('rec-intl-swift')?.value.trim().toUpperCase();if(!name||!iban){showToast('❌ Fill name and account');return}S.recName=name;S.recPhone=iban;details=iban+(swift?' · '+swift:'');type='International 🌍';time='1-3 business days';}
+  const sym=SYM[S.toCurr]||'';const toStr=sym+S.to.toLocaleString('en-IN',{maximumFractionDigits:2})+' '+S.toCurr;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  set('conf-mvr','MVR '+S.mvr);set('conf-to',toStr);set('conf-nm',name);set('conf-type',type);set('conf-det',details);
+  set('conf-rate',S.mode==='local'?'Local MVR':`1 MVR = ${(S.rate[S.toCurr]||1).toFixed(4)} ${S.toCurr}`);
+  set('conf-fee',fee);set('conf-time',time);S.pCV='';updPD('cdots','cp','');go('confirm');
+}
+// YOUR WHATSAPP NUMBER - Change this to your number!
+const AGENT_WHATSAPP = '9607369662';
+
+async function doTransfer(){
+  const ref='SMV'+Date.now().toString().slice(-8);
+  const sym=SYM[S.toCurr]||'';
+  const toStr=sym+S.to.toLocaleString('en-IN',{maximumFractionDigits:2})+' '+S.toCurr;
+  const fee=S.mode==='local'?0:S.mode==='international'?20:10;
+  const total=S.mvr+fee;
+
+  // Save to backend
+  try{
+    await api('/api/transfer/create',{method:'POST',body:JSON.stringify({
+      recipientName:S.recName,recipientPhone:S.recPhone,
+      mvrAmount:S.mvr,inrAmount:S.to,
+      exchangeRate:S.rate[S.toCurr]||S.rate.INR,
+      transferType:S.mode,reference:ref,status:'processing'
+    })});
+  }catch(e){console.log('Backend offline, continuing...')}
+
+  const fromLabel=S.mode==='usd-india'?`USD ${S.mvr} (${S.usdSource||'cash'})`:S.mode==='crypto'?`${S.mvr} ${(S.cryptoType||'USDT').toUpperCase()}`:S.mode==='local'?`MVR ${S.mvr}`:`MVR ${S.mvr}`;
+  const modeLabel=S.mode==='usd-india'?'USD → INR':S.mode==='crypto'?'CRYPTO → INR':S.mode==='local'?'LOCAL MVR':S.mode==='international'?'INTERNATIONAL':'INDIA MVR→INR';
+  const cryptoNote=S.mode==='crypto'?'\n\n⚠️ CRYPTO WALLET:\nTRX: TYour_USDT_Wallet_Here\nBTC: bc1your_btc_wallet_here\nPlease send after confirmation!':'';
+  const waMsg=`🔔 NEW SENDMV TRANSFER\n\n`+
+    `📋 Ref: ${ref}\n`+
+    `🔄 Type: ${modeLabel}\n`+
+    `👤 From: ${S.user?.name||'Customer'}\n`+
+    `📱 Contact: ${S.user?.email||'N/A'}\n\n`+
+    `💸 They Send: ${fromLabel}\n`+
+    `💱 Rate: ${S.mode==='usd-india'?`1 USD = ${((S.rate.INR||83)/(S.rate.USD||0.065)).toFixed(2)} INR`:S.mode==='crypto'?`1 USDT ≈ ${((S.rate.INR||83)/(S.rate.USD||0.065)).toFixed(2)} INR`:`1 MVR = ${(S.rate.INR||4.82).toFixed(2)} INR`}\n`+
+    `🏷️ Fee: ${S.mode==='crypto'?`${Math.ceil(S.mvr*0.01)} USDT`:S.mode==='usd-india'?'MVR 15':S.mode==='local'?'Free':S.mode==='international'?'MVR 20':'MVR 10'}\n\n`+
+    `📤 SEND TO:\n`+
+    `👤 Name: ${S.recName}\n`+
+    `📱 Account: ${S.recPhone}\n`+
+    `💰 Amount: ${toStr}\n\n`+
+    `⏰ ${new Date().toLocaleString()}`+cryptoNote+`\n\nPlease process and confirm! ✅`;
+
+  // Update success screen
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  set('suc-mvr','MVR '+S.mvr);
+  set('suc-to',toStr);
+  set('suc-s','Transfer submitted — processing by SendMV team');
+  set('suc-ref','Ref: '+ref);
+  set('suc-eta','⏳ Processing: 30-60 minutes');
+  set('suc-t','Transfer Submitted! ✅');
+
+  // Store transfer locally
+  const txns=JSON.parse(localStorage.getItem('smv_txns')||'[]');
+  txns.unshift({ref,recName:S.recName,recPhone:S.recPhone,mvr:S.mvr,to:S.to,curr:S.toCurr,mode:S.mode,status:'processing',date:new Date().toISOString()});
+  localStorage.setItem('smv_txns',JSON.stringify(txns));
+
+  addNotif('📤 Transfer Submitted','MVR '+S.mvr+' to '+S.recName+' — Ref: '+ref);
+
+  // Open WhatsApp to notify agent
+  setTimeout(()=>{
+    window.open('https://wa.me/'+AGENT_WHATSAPP+'?text='+encodeURIComponent(waMsg));
+  },1500);
+
+  go('success');
+}
+async function loadHistory(){
+  const c=document.getElementById('history-list');if(!c)return;
+  c.innerHTML='<div style="text-align:center;color:var(--gray);padding:40px">Loading...</div>';
+  try{
+    const d=await api('/api/transfer/history');
+    if(!Array.isArray(d)||!d.length){c.innerHTML='<div style="text-align:center;color:var(--gray);padding:40px">No transfers yet! 💸</div>';return}
+    const icon={local:'🇲🇻',india:'🇮🇳',international:'🌍'};
+    c.innerHTML=d.map(tx=>`<div class="tx-card" style="background:var(--card);border-radius:18px;padding:18px;margin-bottom:12px"><div style="width:48px;height:48px;background:#f0f4ff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px">${icon[tx.transferType]||'🇮🇳'}</div><div style="flex:1"><div style="font-weight:700;color:var(--text);font-size:15px">${tx.recipientName}</div><div style="color:var(--gray);font-size:12px;margin-top:2px">${tx.recipientPhone} · ${new Date(tx.createdAt).toLocaleDateString()}</div></div><div style="text-align:right"><div style="font-weight:800;color:var(--text);font-size:16px">MVR ${tx.mvrAmount}</div><div style="background:#f0fdf4;border-radius:8px;padding:3px 10px;margin-top:4px"><span style="color:var(--green);font-size:12px;font-weight:600">✓ ${tx.status}</span></div></div></div>`).join('');
+  }catch(e){c.innerHTML='<div style="text-align:center;color:var(--gray);padding:40px">Could not load history</div>'}
+}
+function loadRates(){
+  const c=document.getElementById('rates-list');if(!c)return;
+  const rates=[{flag:'🇮🇳',name:'Indian Rupee',code:'INR'},{flag:'🇺🇸',name:'US Dollar',code:'USD'},{flag:'🇬🇧',name:'British Pound',code:'GBP'},{flag:'🇪🇺',name:'Euro',code:'EUR'},{flag:'🇦🇪',name:'UAE Dirham',code:'AED'},{flag:'🇸🇬',name:'Singapore Dollar',code:'SGD'},{flag:'🇦🇺',name:'Australian Dollar',code:'AUD'},{flag:'🇨🇦',name:'Canadian Dollar',code:'CAD'},{flag:'🇲🇾',name:'Malaysian Ringgit',code:'MYR'},{flag:'🇸🇦',name:'Saudi Riyal',code:'SAR'},{flag:'🇱🇰',name:'Sri Lankan Rupee',code:'LKR'},{flag:'🇧🇩',name:'Bangladeshi Taka',code:'BDT'}];
+  c.innerHTML=rates.map(r=>`<div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)"><div style="font-size:28px;margin-right:12px">${r.flag}</div><div style="flex:1"><div style="font-weight:700;color:var(--text);font-size:14px">${r.name}</div><div style="color:var(--gray);font-size:12px">1 MVR</div></div><div style="text-align:right"><div style="font-weight:800;color:var(--green);font-size:16px">${S.rate[r.code]?.toFixed(4)||'—'}</div><div style="color:var(--gray);font-size:11px">${r.code}</div></div></div>`).join('');
+}
+function openQR(){document.getElementById('qr-ov').classList.add('show')}
+function closeQR(){document.getElementById('qr-ov').classList.remove('show')}
+function simulateQR(){closeQR();showToast('✅ QR Scanned!');const n=document.getElementById('rec-nm-upi');if(n)n.value='Rahul Kumar';const p=document.getElementById('rec-phone');if(p)p.value='9876543210';S.mode='india';S.method='upi';go('recipient');}
+function setQRT(t){['upi','bank','bml','swift'].forEach(x=>{const b=document.getElementById('qrt-'+x);if(!b)return;b.style.background=x===t?'#1a3c6e':'var(--card)';b.style.color=x===t?'#fff':'var(--text)';b.style.borderColor=x===t?'#1a3c6e':'var(--border)';});}
+function processQR(){const v=document.getElementById('qr-manual')?.value.trim();if(!v){showToast('❌ Enter QR data');return}['rec-nm-upi','rec-nm-local'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='QR Recipient'});if(/^\d{10}$/.test(v)){const p=document.getElementById('rec-phone');if(p)p.value=v}showToast('✅ QR processed!');go('recipient');}
+function swTab(t){document.getElementById('upi-s').style.display=t==='upi'?'block':'none';document.getElementById('bnk-s').style.display=t==='bank'?'block':'none';['upi','bnk'].forEach(x=>{const b=document.getElementById('bt-'+x);if(!b)return;const on=(x==='upi'&&t==='upi')||(x==='bnk'&&t==='bank');b.style.background=on?'#1a3c6e':'var(--card)';b.style.color=on?'#fff':'var(--text)';b.style.borderColor=on?'#1a3c6e':'var(--border)';});}
+function saveMVR(){const bank=document.getElementById('bml-bank').value,acc=document.getElementById('bml-acc').value.trim(),name=document.getElementById('bml-name').value.trim();if(!acc||!name){showToast('❌ Fill all fields');return}const b=JSON.parse(localStorage.getItem('smv_banks')||'[]');b.push({type:'MVR',bank,acc,name,flag:'🇲🇻',method:'MVR Bank'});localStorage.setItem('smv_banks',JSON.stringify(b));showToast('✅ MVR bank saved!');loadBanks();document.getElementById('bml-acc').value='';document.getElementById('bml-name').value='';}
+function saveUPI(){const ph=document.getElementById('upi-ph').value.trim(),nm=document.getElementById('upi-nm').value.trim();if(!ph||!nm){showToast('❌ Fill all fields
